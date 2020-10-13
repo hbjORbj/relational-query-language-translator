@@ -41,7 +41,7 @@ public abstract class Expression {
 		CONJUNCTION (Expression.getConnective(RCLexer.CONJUNCTION)),
 		DISJUNCTION (Expression.getConnective(RCLexer.DISJUNCTION)),
 		IMPLICATION (Expression.getConnective(RCLexer.IMPLICATION)),
-		EQUALITY (Expression.getConnective(RCLexer.EQUALITY)),
+		COMPARISON (Expression.getConnective(RCLexer.COMPARISON)),
 		UNIVERSAL (Expression.getConnective(RCLexer.UNIVERSAL)),
 		EXISTENTIAL (Expression.getConnective(RCLexer.EXISTENTIAL))
 		
