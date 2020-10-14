@@ -1,31 +1,28 @@
 package honours_project;
 
-public interface Term<Relation, Element> {
-
-	public static class Constant<Relation, Element> implements Term<Relation, Element> {
-		public final Relation relation;
-		public final Element value;
-
-		private Constant(Relation relation, Element value) {
-			super();
-			this.relation = relation;
-			this.value = value;
-		}
-		
-		public static <Relation, Element> Constant<Relation, Element> getConstant(Relation relation, Element value) {
-			return new Constant<Relation, Element>(relation, value);
-		}
-		
-		public Relation getRelation() {
-			return this.relation;
-		}
-		
-		public Element getValue() {
-			return this.value;
-		}
+public class Term {
+	private String value; // can be a constant value or variable name
+	private Boolean constant; // tells whether or not "value" is a constant value; if not, it is a variable name
+	
+	public Term(String value, boolean constant) {
+		this.value = value;
+		this.constant = constant;
 	}
 	
-	public enum Precedence implements Comparable<Precedence> {
-		ATOMIC, COMPARISON, NEGATION, CONJUNCTION, DISJUNCTION, IMPLICATION, UNIVERSAL, EXISTENTIAL;
+	public boolean isConstant() {
+		return constant;
+	}
+	
+	public boolean isVariable() {
+		return !constant;
+	}
+	
+	public String getValue() {
+		return value;
+	}
+	
+	@Override
+	public String toString() {
+		return constant ? value : '?' + value;
 	}
 }
