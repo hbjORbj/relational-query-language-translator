@@ -18,7 +18,6 @@ public class Equality {
 		return String.format("%s = %s", left.toString(), right.toString());
 	}
 	
-	@Override
 	public Set<Term> free() {
 		Set<Term> free = new HashSet<>();
 		if (left.isVariable()) {

@@ -8,6 +8,7 @@ public class Expression {
 	}
 
 	public static enum Type {
+		NEGATION		 (Expression.getConnective(RCLexer.NEGATION)),
 		CONJUNCTION  (Expression.getConnective(RCLexer.CONJUNCTION)),
 		DISJUNCTION  (Expression.getConnective(RCLexer.DISJUNCTION)),
 		IMPLICATION  (Expression.getConnective(RCLexer.IMPLICATION)),

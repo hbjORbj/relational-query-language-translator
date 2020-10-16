@@ -17,10 +17,13 @@ public class Predicate {
 	
 	@Override
 	public String toString() {
-		return String.format("%s(%s)", name, String.join(",", terms));
+		List<String> list = new ArrayList<>();
+		for (Term t : terms) {
+			list.add(t.toString());
+		}
+		return String.format("%s(%s)", name, String.join(",", list));
 	}
 	
-	@Override
 	public Set<Term> free() {
 		Set<Term> free = new HashSet<>();
 		for (Term t : terms) {
