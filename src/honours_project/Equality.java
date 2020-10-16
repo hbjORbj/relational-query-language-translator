@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.HashSet;
 
 public class Equality extends Condition {
+	
 	private Term left;
 	private Term right;
 	
@@ -28,4 +29,5 @@ public class Equality extends Condition {
 		}
 		return free;
 	}
+	
 }

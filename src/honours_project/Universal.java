@@ -5,15 +5,26 @@ import java.util.Set;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class Universal extends Expression {
-	private Expression operand;
+public class Universal extends Formula {
+	private Formula operand;
 	private List<Term> terms;
 	
-	public Universal (List<Term> terms, Expression operand) {
-		super(Expression.Type.UNIVERSAL);
+	public Universal (List<Term> terms, Formula operand) {
+		super(Formula.Type.UNIVERSAL);
 		this.operand = operand;
 		this.terms = new ArrayList<>();
 		this.terms.addAll(terms);
+	}
+	
+	@Override
+	public boolean isValid() {
+		// need to check if each term is free in given formula
+		// To do: create a free() method in Formula class
+		// Set<Term> free = operand.free() 
+		for (Term t : terms) {
+			if (!free.has(t)) return false;
+		}
+		return true;
 	}
 	
 	@Override
@@ -29,10 +40,11 @@ public class Universal extends Expression {
 	}
 	
 	public Set<Term> free() {
-		Set<Term> free = new HashSet<>();
+		// To do: create a free() method in Formula class
+		// Set<Term> free = operand.free() 
 		for (Term t : terms) {
 			if (t.isVariable()) {
-				free.add(t);
+				free.delete(t);
 			}
 		}
 		return free;

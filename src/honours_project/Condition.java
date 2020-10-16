@@ -1,7 +1,5 @@
 package honours_project;
 
-import honours_project.Expression.Type;
-
 public abstract class Condition {
 
 	private static String getConnective(int tokenID) {
@@ -10,12 +8,12 @@ public abstract class Condition {
 	}
 
 	public static enum Type {
-		EQUAL		 	 	(Expression.getConnective(RCLexer.EQUAL)),
-		LESSTHAN  	 	 	(Expression.getConnective(RCLexer.LESSTHAN)),
-		LESSTHANOREQUAL  	(Expression.getConnective(RCLexer.LESSTHANOREQUAL)),
-		GREATERTHAN  	 	(Expression.getConnective(RCLexer.GREATERTHAN)),
-		GREATERTHANOREQUAL	(Expression.getConnective(RCLexer.GREATERTHANOREQUAL)),
-		NOTEQUAL  			(Expression.getConnective(RCLexer.NOTEQUAL));
+		EQUAL		 	 	(Formula.getConnective(RCLexer.EQUAL)),
+		LESSTHAN  	 	 	(Formula.getConnective(RCLexer.LESSTHAN)),
+		LESSTHANOREQUAL  	(Formula.getConnective(RCLexer.LESSTHANOREQUAL)),
+		GREATERTHAN  	 	(Formula.getConnective(RCLexer.GREATERTHAN)),
+		GREATERTHANOREQUAL	(Formula.getConnective(RCLexer.GREATERTHANOREQUAL)),
+		NOTEQUAL  			(Formula.getConnective(RCLexer.NOTEQUAL));
 
 		private final String connective;
 

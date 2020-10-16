@@ -1,7 +1,9 @@
 package honours_project;
 
-public class Disjunction extends BinaryCondition {
-	public Disjunction(Condition left, Condition right) {
-		super(left, right, Condition.Type.DISJUNCTION);
+public class Disjunction extends BinaryOperation {
+	
+	public Disjunction (Formula left, Formula right) {
+		super(left, right, Formula.Type.DISJUNCTION);
 	}
+	
 }

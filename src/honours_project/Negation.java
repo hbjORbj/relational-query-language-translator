@@ -1,11 +1,11 @@
 package honours_project;
 
-public class Negation extends Expression {
+public class Negation extends Formula {
 	
-	private Expression operand;
+	private Formula operand;
 	
-	public Negation (Expression operand) {
-		super(Expression.Type.NEGATION);
+	public Negation (Formula operand) {
+		super(Formula.Type.NEGATION);
 		this.operand = operand;
 	}
 	
