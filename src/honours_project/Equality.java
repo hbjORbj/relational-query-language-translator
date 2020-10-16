@@ -8,8 +8,8 @@ public class Equality extends Condition {
 	private Term left;
 	private Term right;
 	
-	public Equality(Term left, Term right) {
-		super(Condition.Type.EQUAL);
+	public Equality(Term left, Term right, Condition.Type type) {
+		super(type);
 		this.left = left;
 		this.right = right;
 	}
