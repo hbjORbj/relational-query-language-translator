@@ -1,6 +1,6 @@
 package honours_project;
 
-public class Expression {
+public abstract class Expression {
 	
 	private static String getConnective(int tokenID) {
 		String literal = RCLexer.VOCABULARY.getLiteralName(tokenID);

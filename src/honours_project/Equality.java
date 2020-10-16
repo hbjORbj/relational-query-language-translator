@@ -3,19 +3,19 @@ package honours_project;
 import java.util.Set;
 import java.util.HashSet;
 
-public class Equality {
+public class Equality extends Condition {
 	private Term left;
 	private Term right;
 	
 	public Equality(Term left, Term right) {
-		// super(Condition.Type.COMPARISON);
+		super(Condition.Type.EQUAL);
 		this.left = left;
 		this.right = right;
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("%s = %s", left.toString(), right.toString());
+		return String.format("%s %s %s", left.toString(), this.getType().getConnective(), right.toString());
 	}
 	
 	public Set<Term> free() {
