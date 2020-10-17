@@ -10,7 +10,7 @@ public abstract class Formula {
 	}
 
 	public static enum Type {
-		NEGATION		 (Formula.getConnective(RCLexer.NEGATION)),
+		NEGATION     (Formula.getConnective(RCLexer.NEGATION)),
 		CONJUNCTION  (Formula.getConnective(RCLexer.CONJUNCTION)),
 		DISJUNCTION  (Formula.getConnective(RCLexer.DISJUNCTION)),
 		IMPLICATION  (Formula.getConnective(RCLexer.IMPLICATION)),
