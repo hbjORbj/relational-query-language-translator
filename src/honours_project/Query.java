@@ -11,6 +11,7 @@ public class Query {
 	public Query (List<Term> terms, Formula operand) {
 		this.terms = new ArrayList<>();
 		this.terms.addAll(terms);
+		this.operand = operand;
 	}
 	
 	@Override
@@ -20,7 +21,7 @@ public class Query {
 		for (Term t : terms) {
 			list.add(t.toString());
 		}
-		if (list.isEmpty()) {
+		if (list.isEmpty()) { // In case of boolean queries
 			vars = "()";
 		}
 		else {
