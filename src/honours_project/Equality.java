@@ -3,12 +3,12 @@ package honours_project;
 import java.util.Set;
 import java.util.HashSet;
 
-public class Equality extends Condition {
+public class Equality extends BinaryCondition {
 	
 	private Term left;
 	private Term right;
 	
-	public Equality(Term left, Term right, Condition.Type type) {
+	public Equality(Term left, Term right, BinaryCondition.Type type) {
 		super(type);
 		this.left = left;
 		this.right = right;

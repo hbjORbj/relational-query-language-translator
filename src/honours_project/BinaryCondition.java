@@ -1,6 +1,6 @@
 package honours_project;
 
-public abstract class Condition {
+public abstract class BinaryCondition {
 
 	private static String getConnective(int tokenID) {
 		String literal = RCLexer.VOCABULARY.getLiteralName(tokenID);
@@ -28,7 +28,7 @@ public abstract class Condition {
 
 	private final Type type;
 
-	public Condition (Type type) {
+	public BinaryCondition (Type type) {
 		this.type = type;
 	}
 

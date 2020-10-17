@@ -19,7 +19,7 @@ public class Existential extends Formula {
 	public boolean isValid() {
 		// need to check if each term is free in given formula
 		// To do: create a free() method in Formula class
-		// Set<Term> free = operand.free() 
+		Set<Term> free = operand.free() 
 		for (Term t : terms) {
 			if (!free.has(t)) return false;
 		}
