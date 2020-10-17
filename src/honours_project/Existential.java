@@ -6,9 +6,9 @@ import java.util.Set;
 
 public class Existential extends Formula {
 	private Formula operand;
-	private List<String> terms;
+	private List<Term> terms;
 	
-	public Existential (List<String> terms, Formula operand) {
+	public Existential (List<Term> terms, Formula operand) {
 		super(Formula.Type.EXISTENTIAL);
 		this.operand = operand;
 		this.terms = new ArrayList<>();
@@ -16,30 +16,31 @@ public class Existential extends Formula {
 	}
 	
 	@Override
+	public String toString() {
+		List<String> list = new ArrayList<>();
+		for (Term t : terms) {
+			list.add(t.toString());
+		}
+		return String.format("%s%s( %s )",
+				this.getType().getConnective(),
+				String.join(",", list),
+				operand.toString());
+	}
+	
 	public boolean isValid() {
 		// need to check if each term is free in given formula
-		// To do: create a free() method in Formula class
-		Set<Term> free = operand.free() 
+		Set<Term> free = operand.free(); 
 		for (Term t : terms) {
-			if (!free.has(t)) return false;
+			if (!free.contains(t)) return false;
 		}
 		return true;
 	}
 	
-	@Override
-	public String toString() {
-		return String.format("%s%s( %s )",
-				this.getType().getConnective(),
-				String.join(",", terms),
-				operand.toString());
-	}
-	
 	public Set<Term> free() {
-		// To do: create a free() method in Formula class
-		// Set<Term> free = operand.free() 
+		Set<Term> free = operand.free(); 
 		for (Term t : terms) {
 			if (t.isVariable()) {
-				free.delete(t);
+				free.remove(t);
 			}
 		}
 		return free;

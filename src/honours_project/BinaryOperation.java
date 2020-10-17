@@ -1,6 +1,9 @@
 package honours_project;
 
-public class BinaryOperation extends Formula {
+import java.util.HashSet;
+import java.util.Set;
+
+public abstract class BinaryOperation extends Formula {
 	
 	protected Formula leftOperand;
 	protected Formula rightOperand;
@@ -25,6 +28,13 @@ public class BinaryOperation extends Formula {
 				leftOperand,
 				this.getType().getConnective(),
 				rightOperand);
+	}
+	
+	public Set<Term> free() {
+		Set<Term> free = new HashSet<>();
+		free.addAll(leftOperand.free());
+		free.addAll(rightOperand.free());
+		return free;
 	}
 	
 }

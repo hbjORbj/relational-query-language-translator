@@ -1,5 +1,8 @@
 package honours_project;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Negation extends Formula {
 	
 	private Formula operand;
@@ -14,5 +17,11 @@ public class Negation extends Formula {
 		return String.format("%s(%s)",
 				this.getType().getConnective(),
 				operand.toString());
+	}
+	
+	public Set<Term> free() {
+		Set<Term> free = new HashSet<>();
+		free.addAll(operand.free());
+		return free;
 	}
 }

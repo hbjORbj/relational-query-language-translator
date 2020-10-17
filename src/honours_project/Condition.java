@@ -1,21 +1,19 @@
 package honours_project;
 
-import java.util.Set;
+public abstract class Condition {
 
-public abstract class Formula {
-	
 	private static String getConnective(int tokenID) {
 		String literal = RCLexer.VOCABULARY.getLiteralName(tokenID);
 		return literal.replaceAll("'", "");
 	}
 
 	public static enum Type {
-		NEGATION		 (Formula.getConnective(RCLexer.NEGATION)),
-		CONJUNCTION  (Formula.getConnective(RCLexer.CONJUNCTION)),
-		DISJUNCTION  (Formula.getConnective(RCLexer.DISJUNCTION)),
-		IMPLICATION  (Formula.getConnective(RCLexer.IMPLICATION)),
-		UNIVERSAL    (Formula.getConnective(RCLexer.UNIVERSAL)),
-		EXISTENTIAL  (Formula.getConnective(RCLexer.EXISTENTIAL));
+		EQUAL		 	 	(Formula.getConnective(RCLexer.EQUAL)),
+		LESSTHAN  	 	 	(Formula.getConnective(RCLexer.LESSTHAN)),
+		LESSTHANOREQUAL  	(Formula.getConnective(RCLexer.LESSTHANOREQUAL)),
+		GREATERTHAN  	 	(Formula.getConnective(RCLexer.GREATERTHAN)),
+		GREATERTHANOREQUAL	(Formula.getConnective(RCLexer.GREATERTHANOREQUAL)),
+		NOTEQUAL  			(Formula.getConnective(RCLexer.NOTEQUAL));
 
 		private final String connective;
 
@@ -30,14 +28,12 @@ public abstract class Formula {
 
 	private final Type type;
 
-	public Formula (Type type) {
+	public Condition (Type type) {
 		this.type = type;
 	}
 
 	public Type getType() {
 		return type;
 	}
-	
-	public abstract Set<Term> free();
 	
 }

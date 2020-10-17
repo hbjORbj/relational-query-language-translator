@@ -17,17 +17,6 @@ public class Universal extends Formula {
 	}
 	
 	@Override
-	public boolean isValid() {
-		// need to check if each term is free in given formula
-		// To do: create a free() method in Formula class
-		// Set<Term> free = operand.free() 
-		for (Term t : terms) {
-			if (!free.has(t)) return false;
-		}
-		return true;
-	}
-	
-	@Override
 	public String toString() {
 		List<String> list = new ArrayList<>();
 		for (Term t : terms) {
@@ -39,12 +28,21 @@ public class Universal extends Formula {
 				operand.toString());
 	}
 	
-	public Set<Term> free() {
+	public boolean isValid() {
+		// need to check if each term is free in given formula
 		// To do: create a free() method in Formula class
-		// Set<Term> free = operand.free() 
+		Set<Term> free = operand.free();
+		for (Term t : terms) {
+			if (!free.contains(t)) return false;
+		}
+		return true;
+	}
+	
+	public Set<Term> free() {
+		Set<Term> free = operand.free();
 		for (Term t : terms) {
 			if (t.isVariable()) {
-				free.delete(t);
+				free.remove(t);
 			}
 		}
 		return free;

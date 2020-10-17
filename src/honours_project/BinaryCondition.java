@@ -1,39 +1,36 @@
 package honours_project;
 
-public abstract class BinaryCondition {
+import java.util.HashSet;
+import java.util.Set;
 
-	private static String getConnective(int tokenID) {
-		String literal = RCLexer.VOCABULARY.getLiteralName(tokenID);
-		return literal.replaceAll("'", "");
+public abstract class BinaryCondition extends Condition {
+	
+	protected Term left;
+	protected Term right;
+
+	public BinaryCondition (Term left, Term right, Condition.Type type) {
+		super(type);
+		this.left = left;
+		this.right = right;
 	}
 
-	public static enum Type {
-		EQUAL		 	 	(Formula.getConnective(RCLexer.EQUAL)),
-		LESSTHAN  	 	 	(Formula.getConnective(RCLexer.LESSTHAN)),
-		LESSTHANOREQUAL  	(Formula.getConnective(RCLexer.LESSTHANOREQUAL)),
-		GREATERTHAN  	 	(Formula.getConnective(RCLexer.GREATERTHAN)),
-		GREATERTHANOREQUAL	(Formula.getConnective(RCLexer.GREATERTHANOREQUAL)),
-		NOTEQUAL  			(Formula.getConnective(RCLexer.NOTEQUAL));
-
-		private final String connective;
-
-		private Type ( String connective ) {
-			this.connective = connective;
+	@Override
+	public String toString() {
+		return String.format( "%s %s %s",
+				left,
+				this.getType().getConnective(),
+				right);
+	}
+	
+	public Set<Term> free() {
+		Set<Term> free = new HashSet<>();
+		if (left.isVariable()) {
+			free.add(left);
 		}
-
-		public String getConnective() {
-			return connective;
+		if (right.isVariable()) {
+			free.add(right);
 		}
-	}
-
-	private final Type type;
-
-	public BinaryCondition (Type type) {
-		this.type = type;
-	}
-
-	public Type getType() {
-		return type;
+		return free;
 	}
 	
 }
