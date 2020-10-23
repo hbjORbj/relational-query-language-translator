@@ -1,19 +1,21 @@
 package honours_project;
 
-public abstract class Condition {
+public abstract class Condition extends Formula {
 
+	/*
 	private static String getConnective(int tokenID) {
 		String literal = RCLexer.VOCABULARY.getLiteralName(tokenID);
 		return literal.replaceAll("'", "");
 	}
+	*/
 
 	public static enum Type {
-		EQUAL		 	 	(Formula.getConnective(RCLexer.EQUAL)),
-		LESSTHAN  	 	 	(Formula.getConnective(RCLexer.LESSTHAN)),
-		LESSTHANOREQUAL  	(Formula.getConnective(RCLexer.LESSTHANOREQUAL)),
-		GREATERTHAN  	 	(Formula.getConnective(RCLexer.GREATERTHAN)),
-		GREATERTHANOREQUAL	(Formula.getConnective(RCLexer.GREATERTHANOREQUAL)),
-		NOTEQUAL  			(Formula.getConnective(RCLexer.NOTEQUAL));
+		EQUAL		 	 	("="),//Formula.getConnective(RCLexer.EQUAL)),
+		LESSTHAN  	 	 	("<");//Formula.getConnective(RCLexer.LESSTHAN)),
+//		LESSTHANOREQUAL  	(Formula.getConnective(RCLexer.LESSTHANOREQUAL)),
+//		GREATERTHAN  	 	(Formula.getConnective(RCLexer.GREATERTHAN)),
+//		GREATERTHANOREQUAL	(Formula.getConnective(RCLexer.GREATERTHANOREQUAL)),
+//		NOTEQUAL  			(Formula.getConnective(RCLexer.NOTEQUAL));
 
 		private final String connective;
 
@@ -29,11 +31,11 @@ public abstract class Condition {
 	private final Type type;
 
 	public Condition (Type type) {
+		super(Formula.Type.COMPARISON);
 		this.type = type;
 	}
 
-	public Type getType() {
+	public Type getComparisonType() {
 		return type;
 	}
-	
 }

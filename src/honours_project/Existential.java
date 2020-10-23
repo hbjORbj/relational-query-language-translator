@@ -1,6 +1,7 @@
 package honours_project;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,22 +29,27 @@ public class Existential extends Formula {
 	}
 	
 	public boolean isValid() {
-		// need to check if each term is free in given formula
+		// need to check that each term is a variable that is free in given formula
 		Set<Term> free = operand.free(); 
 		for (Term t : terms) {
-			if (!free.contains(t)) return false;
+			if (t.isVariable() == false) {
+				return false;
+			}
+			if (free.contains(t) == false) {
+				return false;
+			}
 		}
 		return true;
 	}
 	
 	public Set<Term> free() {
-		Set<Term> free = operand.free(); 
+		Set<Term> free = new HashSet<>();
+		free.addAll(operand.free()); 
 		for (Term t : terms) {
-			if (t.isVariable()) {
+			//if (t.isVariable()) {
 				free.remove(t);
-			}
+			//}
 		}
 		return free;
 	}
-	
 }

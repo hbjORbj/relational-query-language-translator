@@ -18,7 +18,7 @@ public abstract class BinaryCondition extends Condition {
 	public String toString() {
 		return String.format( "%s %s %s",
 				left,
-				this.getType().getConnective(),
+				this.getComparisonType().getConnective(),
 				right);
 	}
 	

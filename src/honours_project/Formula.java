@@ -4,18 +4,22 @@ import java.util.Set;
 
 public abstract class Formula {
 	
+	/*
 	private static String getConnective(int tokenID) {
 		String literal = RCLexer.VOCABULARY.getLiteralName(tokenID);
 		return literal.replaceAll("'", "");
 	}
+	*/
 
 	public static enum Type {
-		NEGATION     (Formula.getConnective(RCLexer.NEGATION)),
-		CONJUNCTION  (Formula.getConnective(RCLexer.CONJUNCTION)),
-		DISJUNCTION  (Formula.getConnective(RCLexer.DISJUNCTION)),
-		IMPLICATION  (Formula.getConnective(RCLexer.IMPLICATION)),
-		UNIVERSAL    (Formula.getConnective(RCLexer.UNIVERSAL)),
-		EXISTENTIAL  (Formula.getConnective(RCLexer.EXISTENTIAL));
+		PREDICATE    (""),
+		COMPARISON   (""),
+		NEGATION     ("~"),//Formula.getConnective(RCLexer.NEGATION)),
+		CONJUNCTION  ("&"),//Formula.getConnective(RCLexer.CONJUNCTION)),
+		DISJUNCTION  ("|"),//Formula.getConnective(RCLexer.DISJUNCTION)),
+		IMPLICATION  ("->"),//Formula.getConnective(RCLexer.IMPLICATION)),
+		UNIVERSAL    ("[A]"),//Formula.getConnective(RCLexer.UNIVERSAL)),
+		EXISTENTIAL  ("[E]");//Formula.getConnective(RCLexer.EXISTENTIAL));
 
 		private final String connective;
 

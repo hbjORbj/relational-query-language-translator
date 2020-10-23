@@ -25,4 +25,19 @@ public class Term {
 	public String toString() {
 		return constant ? value : '?' + value;
 	}
+	
+	@Override
+	public boolean equals(Object o) { // TODO: fix
+		if (o instanceof Term == false) {
+			return false;
+		}
+		Term t = (Term) o;
+		if (value.equals(t.value) == false) {
+			return false;
+		}
+		if (this.isConstant() != t.isConstant()) {
+			return false;
+		}
+		return true;
+	}
 }
