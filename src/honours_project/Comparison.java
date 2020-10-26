@@ -1,6 +1,6 @@
 package honours_project;
 
-public abstract class Condition extends Formula {
+public abstract class Comparison extends Formula {
 
 	/*
 	private static String getConnective(int tokenID) {
@@ -30,7 +30,7 @@ public abstract class Condition extends Formula {
 
 	private final Type type;
 
-	public Condition (Type type) {
+	public Comparison (Type type) {
 		super(Formula.Type.COMPARISON);
 		this.type = type;
 	}
