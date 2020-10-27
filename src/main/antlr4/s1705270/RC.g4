@@ -30,7 +30,7 @@ NAME
 
 CONSTANT
 :
-	'\'' .+? '\''
+	(LETTER | DIGIT)+
 ;
 
 WHITESPACE
@@ -75,7 +75,7 @@ EXISTENTIAL
 
 EQUAL
 :
-	'=='
+	'='
 ;
 
 LESSTHAN
@@ -85,7 +85,7 @@ LESSTHAN
 
 variable
 :
-	LOWER_CASE_LETTER
+	'?' NAME
 ;
 
 variable_list
@@ -108,17 +108,11 @@ term
 	| constant
 ;
 
-
-comparison
-:
-	| term EQUAL term # Equality
-	| term LESSTHAN term # LessThan
-;
-
 formula
 :
-	| PREDICATE '(' variable_list ')' # Predicate
-	| comparison # Comparison
+	PREDICATE '(' variable_list ')' # Predicate
+	| term EQUAL term # Equality
+	| term LESSTHAN term # LessThan
 	| NEGATION formula # Negation
 	| formula CONJUNCTION formula # Conjunction
 	| formula DISJUNCTION formula # Disjunction
