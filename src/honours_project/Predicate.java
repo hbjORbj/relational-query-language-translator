@@ -8,14 +8,14 @@ import java.util.HashSet;
 public class Predicate extends Formula {
 	private String name;
 	private List<Term> terms;
-	
+
 	public Predicate(String name, List<Term> terms) {
 		super(Formula.Type.PREDICATE);
 		this.name = name;
 		this.terms = new ArrayList<>();
 		this.terms.addAll(terms);
 	}
-	
+
 	@Override
 	public String toString() {
 		List<String> list = new ArrayList<>();
@@ -24,7 +24,7 @@ public class Predicate extends Formula {
 		}
 		return String.format("%s(%s)", name, String.join(",", list));
 	}
-	
+
 	public Set<Term> free() {
 		Set<Term> free = new HashSet<>();
 		for (Term t : terms) {
@@ -34,14 +34,14 @@ public class Predicate extends Formula {
 		}
 		return free;
 	}
-//	
-//	public Set<Term> adom() {
-//		Set<Term> adom = new HashSet<>();
-//		for (Term t : terms) {
-//			if (t.isConstant()) {
-//				adom.add(t);
-//			}
-//		}
-//		return adom;
-//	}
+	//
+	// public Set<Term> adom() {
+	// Set<Term> adom = new HashSet<>();
+	// for (Term t : terms) {
+	// if (t.isConstant()) {
+	// adom.add(t);
+	// }
+	// }
+	// return adom;
+	// }
 }

@@ -28,3 +28,4 @@ local.properties
 *.launch
 /bin/
 .DS_Store
+/target/
