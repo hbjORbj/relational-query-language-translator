@@ -1,4 +1,4 @@
-package s1705270;
+package main.java.s1705270;
 
 public class Term {
 	private String value; // can be a constant value or variable name
