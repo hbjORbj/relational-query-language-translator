@@ -19,7 +19,7 @@ public class App {
 		Equality eq2 = new Equality(y, c);
 		Disjunction disj = new Disjunction(eq1, eq2);
 
-		Term t = new Term("x", false);
+		Term t = new Term("x", true);
 		List<Term> terms2 = new ArrayList<>();
 		terms2.add(t);
 		Formula f = new Existential(terms2, new Conjunction(p, disj));

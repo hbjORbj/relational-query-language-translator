@@ -88,7 +88,7 @@ variable
 	'?' NAME
 ;
 
-variable_list
+variableList
 :
 	variable
 	(
@@ -108,15 +108,23 @@ term
 	| constant
 ;
 
+termList
+:
+	term
+	(
+		',' term
+	)*
+;
+
 formula
 :
-	PREDICATE '(' variable_list ')' # Predicate
+	PREDICATE '(' termList ')' # Predicate
 	| term EQUAL term # Equality
 	| term LESSTHAN term # LessThan
 	| NEGATION formula # Negation
 	| formula CONJUNCTION formula # Conjunction
 	| formula DISJUNCTION formula # Disjunction
 	| formula IMPLICATION formula # Implication
-	| UNIVERSAL '[' variable_list ']' '(' formula ')' # UniversalQuantifier
-	| EXISTENTIAL '[' variable_list ']' '(' formula ')' # ExistentialQuantifier
+	| UNIVERSAL '[' variableList ']' '(' formula ')' # UniversalQuantifier
+	| EXISTENTIAL '[' variableList ']' '(' formula ')' # ExistentialQuantifier
 ;
