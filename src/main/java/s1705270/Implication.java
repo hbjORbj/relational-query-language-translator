@@ -1,4 +1,4 @@
-package main.java.s1705270;
+package s1705270;
 
 public class Implication extends BinaryOperation {
 

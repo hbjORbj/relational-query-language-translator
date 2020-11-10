@@ -1,4 +1,4 @@
-package main.java.s1705270;
+package s1705270;
 
 import java.util.ArrayList;
 import java.util.HashSet;
