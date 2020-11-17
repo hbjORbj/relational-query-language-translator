@@ -27,8 +27,9 @@ public class App {
 //		System.out.println(f);
 //		System.out.println(f.free());
 		
-		Formula f = Formula.parse("R(?x,c)");
-		System.out.println(f);
+		Formula f1 = Formula.parse("R(?x,c)");
+		Formula f2 = Formula.parse("[E]?x,?y(R(?x,?y))");
+		System.out.println(f1);
+		System.out.println(f2);
 	}
-
 }

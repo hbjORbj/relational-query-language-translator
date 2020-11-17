@@ -16,10 +16,7 @@ public class RCListenerImpl extends RCBaseListener {
 	private List<Term> termList = null;
 	private Stack<Term> termStack = new Stack<Term>();
 	private List<Term> varList = null;
-	private List<Term> freeVarList = new ArrayList<Term>(); // tracks free variables of the entire formula
-	private Set<Term> boundVarList = new HashSet<Term>(); // tracks bound variables of the entire formula
 	private Formula parsedFormula = null;
-	private boolean inTermList = false;
 
 	public Formula parsedFormula() {
 		if (formulaStack.size() != 1) {
@@ -32,31 +29,20 @@ public class RCListenerImpl extends RCBaseListener {
 	}
 
 	@Override
-	public void enterTermList(RCParser.TermListContext ctx) {
-		termList = new ArrayList<>();
-		inTermList = true;
-	}
-	
-	@Override
-	public void exitTermList(RCParser.TermListContext ctx) {
-		termList = new ArrayList<>();
-		inTermList = false;
-	}
-
-	@Override
 	public void exitVariable(RCParser.VariableContext ctx) {
 		String value = ctx.getText().substring(1); // get rid of initial '?'
 		Term t = new Term(value, false);
-		if ( ctx.getParent() instanceof RCParser.TermListContext ) {
-//			if (termList.contains(t)) { // No variable name is repeated within a predicate
-//				throw new RuntimeException("You can't repeat a variable within a predicate.");
-//			} else {
-				termList.add(t);
-//			}
+		if ( ctx.getParent() instanceof RCParser.LessThanContext ||
+				 ctx.getParent() instanceof RCParser.EqualityContext ) {
+			termStack.push(t);
 		} else if ( ctx.getParent() instanceof RCParser.VariableListContext ) {
 			varList.add(t);
 		} else {
-			termStack.push(t);
+//			if (termList.contains(t)) { // No variable name is repeated within a predicate
+//				throw new RuntimeException("You can't repeat a variable within a predicate.");
+//			} else {
+			termList.add(t);
+//			}
 		}
 	}
 
@@ -68,11 +54,17 @@ public class RCListenerImpl extends RCBaseListener {
 	@Override public void exitConstant(RCParser.ConstantContext ctx) {
 		String value = ctx.getText();
 		Term t = new Term(value, true);
-		if (inTermList) {
-			termList.add(t);
-		} else {
+		if ( ctx.getParent() instanceof RCParser.LessThanContext ||
+			 ctx.getParent() instanceof RCParser.EqualityContext ) {
 			termStack.push(t);
+		} else {
+			termList.add(t);
 		}
+	}
+	
+	@Override
+	public void enterTermList(RCParser.TermListContext ctx) {
+		termList = new ArrayList<Term>();
 	}
 
 	@Override
