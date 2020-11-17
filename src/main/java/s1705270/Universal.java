@@ -25,23 +25,11 @@ public class Universal extends Formula {
 		return String.format("%s%s( %s )", this.getType().getConnective(), String.join(",", list), operand.toString());
 	}
 
-	public boolean isValid() {
-		// need to check if each term is free in given formula
-		// To do: create a free() method in Formula class
-		Set<Term> free = operand.free();
-		for (Term t : terms) {
-			if (!free.contains(t))
-				return false;
-		}
-		return true;
-	}
-
 	public Set<Term> free() {
-		Set<Term> free = operand.free();
+		Set<Term> free = new HashSet<>();
+		free.addAll(operand.free());
 		for (Term t : terms) {
-			if (t.isVariable()) {
-				free.remove(t);
-			}
+			free.remove(t);
 		}
 		return free;
 	}
