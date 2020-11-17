@@ -120,11 +120,18 @@ public class RCListenerImpl extends RCBaseListener {
 		Formula f = formulaStack.pop();
 		Set<Term> free = f.free();
 		for (Term var : varList) {
+			if (boundVarList.contains(var)) { // another quantifier is already binding this variable
+				throw new RuntimeException("No distinct pair of quantifiers can bind the same variable name.");
+			} else {
+				boundVarList.add(var); // this variable is now bound
+			}
+			
 			if (free.contains(var) == false) { // Check whether each term is free in given formula
 				throw new RuntimeException("One or more variables are not free in given formula.");
+			} else {
+				freeVarList.remove(var); // this variable is no more free
 			}
-			freeVarList.remove(var); // this variable is no more free
-			boundVarList.add(var); // this variable is now bound
+			
 			if (freeVarList.contains(var)) { // this bound variable is free somewhere else in the formula, so we throw an error
 				throw new RuntimeException("No variable name can occur both free and bound.");
 			}
