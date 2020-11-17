@@ -2,7 +2,35 @@ package s1705270;
 
 import java.util.Set;
 
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
 public abstract class Formula {
+	
+	public static Formula parse(String s) throws RecognitionException {
+		RCLexer lexer = new RCLexer(CharStreams.fromString(s));
+		//lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
+		RCParser parser = new RCParser(new CommonTokenStream(lexer));
+		parser.setErrorHandler(new BailErrorStrategy());
+		//parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+		try {
+			ParseTree tree = parser.formula();
+			RCListenerImpl listener = new RCListenerImpl();
+			ParseTreeWalker.DEFAULT.walk(listener, tree);
+			return listener.parsedFormula();
+		} catch (RuntimeException e) {
+			Throwable cause = e.getCause();
+			if (cause instanceof RecognitionException) {
+				throw (RecognitionException) cause;
+			} else {
+				throw e;
+			}
+		}
+	}
 
 	/*
 	 * private static String getConnective(int tokenID) { String literal =

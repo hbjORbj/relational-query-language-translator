@@ -28,11 +28,6 @@ NAME
 	)*
 ;
 
-CONSTANT
-:
-	(LETTER | DIGIT)+
-;
-
 WHITESPACE
 :
 	[ \t\r\n]+ -> skip
@@ -96,10 +91,14 @@ variableList
 	)*
 ;
 
-
 constant
 :
-	CONSTANT
+	NAME
+;
+
+predicateName
+:
+	NAME
 ;
 
 term
@@ -118,13 +117,13 @@ termList
 
 formula
 :
-	PREDICATE '(' termList ')' # Predicate
+	predicateName '(' termList ')' # Predicate
 	| term EQUAL term # Equality
 	| term LESSTHAN term # LessThan
 	| NEGATION formula # Negation
 	| formula CONJUNCTION formula # Conjunction
 	| formula DISJUNCTION formula # Disjunction
 	| formula IMPLICATION formula # Implication
-	| UNIVERSAL '[' variableList ']' '(' formula ')' # UniversalQuantifier
-	| EXISTENTIAL '[' variableList ']' '(' formula ')' # ExistentialQuantifier
+	| UNIVERSAL variableList '(' formula ')' # UniversalQuantifier
+	| EXISTENTIAL variableList '(' formula ')' # ExistentialQuantifier
 ;

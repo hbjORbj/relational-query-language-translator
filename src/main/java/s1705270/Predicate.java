@@ -1,9 +1,9 @@
 package s1705270;
 
-import java.util.List;
-import java.util.Set;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Predicate extends Formula {
 	private String name;
@@ -22,6 +22,8 @@ public class Predicate extends Formula {
 		for (Term t : terms) {
 			list.add(t.toString());
 		}
+		System.out.println(list);
+		System.out.println(name);
 		return String.format("%s(%s)", name, String.join(",", list));
 	}
 
