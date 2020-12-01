@@ -8,7 +8,7 @@ import java.util.Set;
 public class Existential extends Formula {
 	private Formula operand;
 	private List<Term> terms;
-
+	
 	public Existential(List<Term> terms, Formula operand) {
 		super(Formula.Type.EXISTENTIAL);
 		this.operand = operand;
@@ -16,6 +16,14 @@ public class Existential extends Formula {
 		this.terms.addAll(terms);
 	}
 
+	public Formula getOperand() {
+		return this.operand;
+	}
+
+	public List<Term> getTerms() {
+		return this.terms;
+	}
+	
 	@Override
 	public String toString() {
 		List<String> list = new ArrayList<>();

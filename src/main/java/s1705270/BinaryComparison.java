@@ -7,13 +7,21 @@ public abstract class BinaryComparison extends Comparison {
 
 	protected Term left;
 	protected Term right;
-
+	
 	public BinaryComparison(Term left, Term right, Comparison.Type type) {
 		super(type);
 		this.left = left;
 		this.right = right;
 	}
+	
+	public Term getLeftTerm() {
+		return this.left;
+	}
 
+	public Term getRightTerm() {
+		return this.right;
+	}
+	
 	@Override
 	public String toString() {
 		return String.format("%s %s %s", left, this.getComparisonType().getConnective(), right);

@@ -16,6 +16,14 @@ public class Predicate extends Formula {
 		this.terms.addAll(terms);
 	}
 
+	public String getName() {
+		return this.name;
+	}
+
+	public List<Term> getTerms() {
+		return this.terms;
+	}
+	
 	@Override
 	public String toString() {
 		List<String> list = new ArrayList<>();
