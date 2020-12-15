@@ -32,8 +32,9 @@ public class RCListenerImpl extends RCBaseListener {
 	public void exitVariable(RCParser.VariableContext ctx) {
 		String value = ctx.getText().substring(1); // get rid of initial '?'
 		Term t = new Term(value, false);
-		if ( ctx.getParent() instanceof RCParser.LessThanContext ||
-				 ctx.getParent() instanceof RCParser.EqualityContext ) {
+		if ( ctx.getParent() instanceof RCParser.TermContext && (
+				ctx.getParent().getParent() instanceof RCParser.LessThanContext ||
+				ctx.getParent().getParent() instanceof RCParser.EqualityContext )) {
 			termStack.push(t);
 		} else if ( ctx.getParent() instanceof RCParser.VariableListContext ) {
 			varList.add(t);
@@ -54,8 +55,9 @@ public class RCListenerImpl extends RCBaseListener {
 	@Override public void exitConstant(RCParser.ConstantContext ctx) {
 		String value = ctx.getText();
 		Term t = new Term(value, true);
-		if ( ctx.getParent() instanceof RCParser.LessThanContext ||
-			 ctx.getParent() instanceof RCParser.EqualityContext ) {
+		if ( ctx.getParent() instanceof RCParser.TermContext && (
+				ctx.getParent().getParent() instanceof RCParser.LessThanContext ||
+				ctx.getParent().getParent() instanceof RCParser.EqualityContext )) {
 			termStack.push(t);
 		} else {
 			termList.add(t);

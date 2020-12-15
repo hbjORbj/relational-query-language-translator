@@ -1,7 +1,11 @@
 package s1705270;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+
+import uk.ac.ed.pguaglia.real.lang.Expression;
 
 public class App {
 
@@ -26,10 +30,22 @@ public class App {
 //
 //		System.out.println(f);
 //		System.out.println(f.free());
-		
-		Formula f1 = Formula.parse("R(?x,c)");
-		Formula f2 = Formula.parse("[E]?x,?y(R(?x,?y))");
+		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
+		map.put("R", Arrays.asList(new String[] {"A","B"}));
+		Schema sch = new Schema(map);
+		System.out.println(sch);
+		Formula f1 = Formula.parse("?x = c)");
 		System.out.println(f1);
-		System.out.println(f2);
+		TranslatorRC trans = new TranslatorRC(sch);
+		System.out.println(trans.Adom("N"));
+		try {
+			Expression exp  = trans.translate(f1);
+			System.out.println(exp);
+		} catch (TranslationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		Formula f2 = Formula.parse("[E]?x,?y(R(?x,?y))");
+//		System.out.println(f2);
 	}
 }
