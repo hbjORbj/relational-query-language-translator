@@ -11,6 +11,10 @@ public class Negation extends Formula {
 		super(Formula.Type.NEGATION);
 		this.operand = operand;
 	}
+	
+	public Formula getOperand() {
+		return this.operand;
+	}
 
 	@Override
 	public String toString() {
