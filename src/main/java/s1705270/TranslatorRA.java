@@ -10,6 +10,9 @@ import uk.ac.ed.pguaglia.real.lang.BaseExpression;
 import uk.ac.ed.pguaglia.real.lang.Condition;
 import uk.ac.ed.pguaglia.real.lang.Difference;
 import uk.ac.ed.pguaglia.real.lang.Expression;
+import uk.ac.ed.pguaglia.real.lang.Equality;
+import uk.ac.ed.pguaglia.real.lang.Disjunction;
+import uk.ac.ed.pguaglia.real.lang.Conjunction;
 import uk.ac.ed.pguaglia.real.lang.Intersection;
 import uk.ac.ed.pguaglia.real.lang.Product;
 import uk.ac.ed.pguaglia.real.lang.Projection;
@@ -64,12 +67,13 @@ public class TranslatorRA { // Translates RA into RC
 			return new Existential(terms, f);
 	}
 	
-//	private Formula selectionToRC(Selection sel) { 
-//		Expression e = sel.getOperand(); // Selection needs these methods: getOperand() and getCondition()
-//		Condition cond = sel.getCondition();
-//		Formula f1 = translateToRC(e);
-//		return new Conjunction(f1, f2)
-//	}
+	private Formula selectionToRC(Selection sel) { 
+		Expression e = sel.getOperand(); // Selection needs these methods: getOperand() and getCondition()
+		Condition cond = sel.getCondition();
+		Formula f1 = translateToRC(e);
+		Formula f2 = translateToRC(cond);
+		return new Conjunction(f1, f2);
+	}
 	
 	private Formula productToRC(Product prod) { 
 		Expression left = prod.getLeftOperand();
@@ -110,6 +114,58 @@ public class TranslatorRA { // Translates RA into RC
 			return differenceToRC((Difference) e);
 		} else { // we should never reach this point
 			throw new RuntimeException("Unknown kind of expression");
+		}
+	}
+	
+	private Formula equalityToRC(uk.ac.ed.pguaglia.real.lang.Equality c) { // RA Equality needs these methods: getLeftTerm() and getRightTerm()
+		uk.ac.ed.pguaglia.real.lang.Term leftTerm = c.getLeftTerm();
+		uk.ac.ed.pguaglia.real.lang.Term rightTerm = c.getRightTerm();
+		Term t1 = new Term(env.get(leftTerm.getValue()), leftTerm.isConstant());
+		Term t2 = new Term(env.get(rightTerm.getValue()), rightTerm.isConstant());
+		return new Equality(t1, t2);
+	}
+	
+	private Formula lessThanToRC(uk.ac.ed.pguaglia.real.lang.LessThan c) { // RA LessThan Class is needed
+		uk.ac.ed.pguaglia.real.lang.Term leftTerm = c.getLeftTerm();
+		uk.ac.ed.pguaglia.real.lang.Term rightTerm = c.getRightTerm();
+		Term t1 = new Term(env.get(leftTerm.getValue()), leftTerm.isConstant());
+		Term t2 = new Term(env.get(rightTerm.getValue()), rightTerm.isConstant());
+		return new LessThan(t1, t2);
+	}
+	
+	private Formula conjunctionToRC(uk.ac.ed.pguaglia.real.lang.Conjunction c) { // RA Conjunction needs these methods: getLeftCondtion() and getRightCondition()
+		Condition leftCond = c.getLeftCondition();
+		Condition rightCond = c.getRightCondition();
+		Formula f1 = translateToRC(leftCond);
+		Formula f2 = translateToRC(rightCond);
+		return new Conjunction(f1, f2);
+	}
+	
+	private Formula disjunctionToRC(uk.ac.ed.pguaglia.real.lang.Disjunction c) { // RA Disjunction needs these methods: getLeftCondtion() and getRightCondition()
+		Condition leftCond = c.getLeftCondition();
+		Condition rightCond = c.getRightCondition();
+		Formula f1 = translateToRC(leftCond);
+		Formula f2 = translateToRC(rightCond);
+		return new Disjunction(f1, f2);
+	}
+	
+	private Formula negationToRC(uk.ac.ed.pguaglia.real.lang.Negation c) {
+		Condition cond = c.getCondition(); // RA Negation needs getCondition() method
+		Formula f = translateToRC(cond);
+		return new Negation(f);
+	}
+	
+	public Formula translateToRC( Condition c ) {
+		if (c instanceof uk.ac.ed.pguaglia.real.lang.Equality) {
+			return equalityToRC((uk.ac.ed.pguaglia.real.lang.Equality) c);
+		} else if (c instance of uk.ac.ed.pguaglia.real.lang.LessThan) {
+			return lessThanToRC((uk.ac.ed.pguaglia.real.lang.LessThan) c);
+		} else if (c instanceof uk.ac.ed.pguaglia.real.lang.Conjunction) {
+			return conjunctionToRC((uk.ac.ed.pguaglia.real.lang.Conjunction) c);
+		} else if (c instanceof uk.ac.ed.pguaglia.real.lang.Disjunction) {
+			return disjunctionToRC((uk.ac.ed.pguaglia.real.lang.Disjunction) c);
+		} else if (c instance of uk.ac.ed.pguaglia.real.lang.Negation) {
+			return negationToRC((uk.ac.ed.pguaglia.real.lang.Negation) c);
 		}
 	}
 	
