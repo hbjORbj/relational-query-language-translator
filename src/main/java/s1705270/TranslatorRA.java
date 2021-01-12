@@ -6,18 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import uk.ac.ed.pguaglia.real.db.SchemaException;
 import uk.ac.ed.pguaglia.real.lang.BaseExpression;
 import uk.ac.ed.pguaglia.real.lang.Condition;
 import uk.ac.ed.pguaglia.real.lang.Difference;
 import uk.ac.ed.pguaglia.real.lang.Expression;
-import uk.ac.ed.pguaglia.real.lang.Equality;
-import uk.ac.ed.pguaglia.real.lang.Disjunction;
-import uk.ac.ed.pguaglia.real.lang.Conjunction;
-import uk.ac.ed.pguaglia.real.lang.Intersection;
 import uk.ac.ed.pguaglia.real.lang.Product;
 import uk.ac.ed.pguaglia.real.lang.Projection;
-import uk.ac.ed.pguaglia.real.lang.Renaming;
-import uk.ac.ed.pguaglia.real.lang.ReplacementException;
 import uk.ac.ed.pguaglia.real.lang.Selection;
 import uk.ac.ed.pguaglia.real.lang.Union;
 
@@ -48,9 +43,14 @@ public class TranslatorRA { // Translates RA into RC
 		return new Predicate(name, terms);
 	}
 	
-	private Formula projectionToRC(Projection proj) {
-			Expression e = proj.getOperand(); // Projection needs these methods: getOperand() and getAttributes()
-			List<String> attrs = proj.getAttributes();
+	private Formula projectionToRC(Projection proj) throws TranslationException {
+			Expression e = proj.getOperand();
+			Set<String> attrs;
+			try {
+				attrs = proj.signature(schema.convert());
+			} catch (SchemaException e1) {
+				throw new TranslationException(e1.getMessage());
+			}
 			Formula f = translateToRC(e);
 			Set<Term> free = f.free();
 			List<Term> terms = new ArrayList<>();
@@ -67,15 +67,15 @@ public class TranslatorRA { // Translates RA into RC
 			return new Existential(terms, f);
 	}
 	
-	private Formula selectionToRC(Selection sel) { 
-		Expression e = sel.getOperand(); // Selection needs these methods: getOperand() and getCondition()
+	private Formula selectionToRC(Selection sel) throws TranslationException { 
+		Expression e = sel.getOperand();
 		Condition cond = sel.getCondition();
 		Formula f1 = translateToRC(e);
 		Formula f2 = translateToRC(cond);
 		return new Conjunction(f1, f2);
 	}
 	
-	private Formula productToRC(Product prod) { 
+	private Formula productToRC(Product prod) throws TranslationException { 
 		Expression left = prod.getLeftOperand();
 		Expression right = prod.getRightOperand();
 		Formula f1 = translateToRC(left);
@@ -83,7 +83,7 @@ public class TranslatorRA { // Translates RA into RC
 		return new Conjunction(f1, f2);
 	}
 	
-	private Formula unionToRC(Union uni) { 
+	private Formula unionToRC(Union uni) throws TranslationException { 
 		Expression left = uni.getLeftOperand();
 		Expression right = uni.getRightOperand();
 		Formula f1 = translateToRC(left);
@@ -91,7 +91,7 @@ public class TranslatorRA { // Translates RA into RC
 		return new Disjunction(f1, f2);
 	}
 	
-	private Formula differenceToRC(Difference diff) { 
+	private Formula differenceToRC(Difference diff) throws TranslationException { 
 		Expression left = diff.getLeftOperand();
 		Expression right = diff.getRightOperand();
 		Formula f1 = translateToRC(left);
@@ -99,7 +99,7 @@ public class TranslatorRA { // Translates RA into RC
 		return new Conjunction(f1, new Negation(f2));
 	}
 	
-	public Formula translateToRC( Expression e ) {
+	public Formula translateToRC( Expression e ) throws TranslationException {
 		if (e instanceof BaseExpression) {
 			return baseExprToRC((BaseExpression) e);
 		} else if (e instanceof Projection) {
@@ -125,13 +125,13 @@ public class TranslatorRA { // Translates RA into RC
 		return new Equality(t1, t2);
 	}
 	
-	private Formula lessThanToRC(uk.ac.ed.pguaglia.real.lang.LessThan c) { // RA LessThan Class is needed
-		uk.ac.ed.pguaglia.real.lang.Term leftTerm = c.getLeftTerm();
-		uk.ac.ed.pguaglia.real.lang.Term rightTerm = c.getRightTerm();
-		Term t1 = new Term(env.get(leftTerm.getValue()), leftTerm.isConstant());
-		Term t2 = new Term(env.get(rightTerm.getValue()), rightTerm.isConstant());
-		return new LessThan(t1, t2);
-	}
+//	private Formula lessThanToRC(uk.ac.ed.pguaglia.real.lang.LessThan c) { // RA LessThan Class is needed
+//		uk.ac.ed.pguaglia.real.lang.Term leftTerm = c.getLeftTerm();
+//		uk.ac.ed.pguaglia.real.lang.Term rightTerm = c.getRightTerm();
+//		Term t1 = new Term(env.get(leftTerm.getValue()), leftTerm.isConstant());
+//		Term t2 = new Term(env.get(rightTerm.getValue()), rightTerm.isConstant());
+//		return new LessThan(t1, t2);
+//	}
 	
 	private Formula conjunctionToRC(uk.ac.ed.pguaglia.real.lang.Conjunction c) { // RA Conjunction needs these methods: getLeftCondtion() and getRightCondition()
 		Condition leftCond = c.getLeftCondition();
@@ -158,14 +158,14 @@ public class TranslatorRA { // Translates RA into RC
 	public Formula translateToRC( Condition c ) {
 		if (c instanceof uk.ac.ed.pguaglia.real.lang.Equality) {
 			return equalityToRC((uk.ac.ed.pguaglia.real.lang.Equality) c);
-		} else if (c instance of uk.ac.ed.pguaglia.real.lang.LessThan) {
-			return lessThanToRC((uk.ac.ed.pguaglia.real.lang.LessThan) c);
 		} else if (c instanceof uk.ac.ed.pguaglia.real.lang.Conjunction) {
 			return conjunctionToRC((uk.ac.ed.pguaglia.real.lang.Conjunction) c);
 		} else if (c instanceof uk.ac.ed.pguaglia.real.lang.Disjunction) {
 			return disjunctionToRC((uk.ac.ed.pguaglia.real.lang.Disjunction) c);
-		} else if (c instance of uk.ac.ed.pguaglia.real.lang.Negation) {
+		} else if (c instanceof uk.ac.ed.pguaglia.real.lang.Negation) {
 			return negationToRC((uk.ac.ed.pguaglia.real.lang.Negation) c);
+		} else { // we should never reach this point
+			throw new RuntimeException("Unknown kind of condition");
 		}
 	}
 	

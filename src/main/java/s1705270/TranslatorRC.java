@@ -170,29 +170,29 @@ public class TranslatorRC { // Translates RC into RA
 		return new Selection(cond, exp);
 	}
 	
-	private Expression lessThanToRA(LessThan eq) {
-		uk.ac.ed.pguaglia.real.lang.Term t1 = termToTerm(eq.getLeftTerm());
-		uk.ac.ed.pguaglia.real.lang.Term t2 = termToTerm(eq.getRightTerm());
-		if ((t1.isConstant() && t2.isConstant()) || (t1 == t2)) { // No atoms of the form: c1 op c2 OR x op x
-			return null;
-		}
-		
-		uk.ac.ed.pguaglia.real.lang.LessThan cond = new uk.ac.ed.pguaglia.real.lang.LessThan(t1,t2); // RA LessThan Class is needed
-		Expression exp = null;
-		if (t1.isAttribute()) {
-			exp = Adom(t1.getValue());
-		}
-		if (t2.isAttribute()) {
-			if (exp == null) {
-				exp = Adom(t2.getValue());
-			} else {
-				exp = new Product(exp, Adom(t2.getValue()));
-			}
-		}
-		return new Selection(cond, exp);
-	}
+//	private Expression lessThanToRA(LessThan eq) {
+//		uk.ac.ed.pguaglia.real.lang.Term t1 = termToTerm(eq.getLeftTerm());
+//		uk.ac.ed.pguaglia.real.lang.Term t2 = termToTerm(eq.getRightTerm());
+//		if ((t1.isConstant() && t2.isConstant()) || (t1 == t2)) { // No atoms of the form: c1 op c2 OR x op x
+//			return null;
+//		}
+//		
+//		uk.ac.ed.pguaglia.real.lang.LessThan cond = new uk.ac.ed.pguaglia.real.lang.LessThan(t1,t2); // RA LessThan Class is needed
+//		Expression exp = null;
+//		if (t1.isAttribute()) {
+//			exp = Adom(t1.getValue());
+//		}
+//		if (t2.isAttribute()) {
+//			if (exp == null) {
+//				exp = Adom(t2.getValue());
+//			} else {
+//				exp = new Product(exp, Adom(t2.getValue()));
+//			}
+//		}
+//		return new Selection(cond, exp);
+//	}
 	
-	private Expression negationToRA(Negation neg) {
+	private Expression negationToRA(Negation neg) throws TranslationException {
 		Formula f = neg.getOperand();
 		Set<Term> free = neg.free();
 		Expression exp1 = null;
@@ -216,7 +216,7 @@ public class TranslatorRC { // Translates RC into RA
 		} else if (f instanceof Equality) {
 			return equalityToRA((Equality) f);
 		} else if (f instanceof LessThan) {
-			return lessThanToRA((LessThan) f);
+			throw new TranslationException("NOT IMPLEMENTED");
 		} else if (f instanceof Negation) {
 			return negationToRA((Negation) f);
 		} else { // we should never reach this point

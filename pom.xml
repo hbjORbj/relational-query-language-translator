@@ -17,9 +17,9 @@
 		<dependency>
 			<groupId>uk.ac.ed.pguaglia</groupId>
 			<artifactId>real</artifactId>
-			<version>0.4</version>
+			<version>0.5-SNAPSHOT</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/resources/real-0.4.jar</systemPath>
+			<systemPath>${project.basedir}/src/main/resources/real-0.5-SNAPSHOT.jar</systemPath>
 		</dependency>
 	</dependencies>
 

@@ -19,4 +19,12 @@ public class Schema {
 	public List<String> getAttributes(String rel) {
 		return map.get(rel);
 	}
+	
+	public uk.ac.ed.pguaglia.real.db.Schema convert() {
+		uk.ac.ed.pguaglia.real.db.Schema sch = new uk.ac.ed.pguaglia.real.db.Schema();
+		for (String tbl : map.keySet()) {
+			sch.addTable(tbl, map.get(tbl));
+		}
+		return sch;
+	}
 }
