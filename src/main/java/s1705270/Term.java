@@ -28,17 +28,17 @@ public class Term {
 	}
 
 	@Override
-	public boolean equals(Object o) { // TODO: fix
+	public boolean equals(Object o) {
 		if (o instanceof Term == false) {
 			return false;
 		}
 		Term t = (Term) o;
-		if (value.equals(t.value) == false) {
-			return false;
+		if (this.isVariable() && t.isVariable() && value.equals(t.value)) {
+			return true;
 		}
-		if (this.isConstant() != t.isConstant()) {
-			return false;
+		if (this.isConstant() && t.isConstant() && value.equals(t.value)) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 }
