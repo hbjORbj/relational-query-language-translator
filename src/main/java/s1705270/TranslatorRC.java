@@ -148,14 +148,22 @@ public class TranslatorRC { // Translates RC into RA
 		Expression e = translateToRA(f);
 
 		List<Term> terms = ext.getTerms();
-		Set<Term> free = ext.free();
+
 		List<String> attributes = new ArrayList<>();
-		for (Term term: free) {
-			if (!terms.contains(term)) {
-				attributes.add(env.get(term.toString()));
+		
+		// TO FIX: Formula.free() has duplicates even though it is a Set 
+		for (Term t1 : ext.free()) {
+			boolean exists = false;
+			for (Term t2 : terms) {
+				if (t1.equals(t2)) {
+					exists = true;
+				}
+			}
+			if (!exists && !attributes.contains(env.get(t1.toString()))) {
+				attributes.add(env.get(t1.toString()));
 			}
 		}
-
+		
 		return new Projection(attributes, e);
 	}
 	
