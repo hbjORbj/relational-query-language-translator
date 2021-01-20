@@ -3,6 +3,7 @@ package s1705270;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,40 +53,68 @@ public class TranslatorRC { // Translates RC into RA
 	private Expression conjunctionToRA(Conjunction conj) throws TranslationException {
 		Formula f1 = conj.getLeftOperand();
 		Formula f2 = conj.getRightOperand();
-		Set<Term> free1 = f1.free();
-		Set<Term> free2 = f2.free();
+
 		Expression e1 = translateToRA(f1);
 		Expression e2 = translateToRA(f2);
-		for (Term term : free2) {
-			if (!free1.contains(term)) {
-				e1 = new Product(e1, Adom(env.get(term.toString())));
+		
+		for (Term t1 : f1.free()) {
+			boolean exists = false;
+			for (Term t2 : f2.free()) {
+				if (t1.equals(t2)) {
+					exists = true;
+				}
+			}
+			if (!exists) {
+				e2 = new Product(e2, Adom(env.get(t1.toString())));
 			}
 		}
-		for (Term term : free1) {
-			if (!free2.contains(term)) {
-				e2 = new Product(e2, Adom(env.get(term.toString())));
+		
+		for (Term t2 : f2.free()) {
+			boolean exists = false;
+			for (Term t1 : f1.free()) {
+				if (t1.equals(t2)) {
+					exists = true;
+				}
+			}
+			if (!exists) {
+				e1 = new Product(e1, Adom(env.get(t2.toString())));
 			}
 		}
+
 		return new Intersection(e1, e2);
 	}
 
 	private Expression disjunctionToRA(Disjunction disj) throws TranslationException {
 		Formula f1 = disj.getLeftOperand();
 		Formula f2 = disj.getRightOperand();
-		Set<Term> free1 = f1.free();
-		Set<Term> free2 = f2.free();
+
 		Expression e1 = translateToRA(f1);
 		Expression e2 = translateToRA(f2);
-		for (Term term : free2) {
-			if (!free1.contains(term)) {
-				e1 = new Product(e1, Adom(env.get(term.toString())));
+
+		for (Term t1 : f1.free()) {
+			boolean exists = false;
+			for (Term t2 : f2.free()) {
+				if (t1.equals(t2)) {
+					exists = true;
+				}
+			}
+			if (!exists) {
+				e2 = new Product(e2, Adom(env.get(t1.toString())));
 			}
 		}
-		for (Term term : free1) {
-			if (!free2.contains(term)) {
-				e2 = new Product(e2, Adom(env.get(term.toString())));
+		
+		for (Term t2 : f2.free()) {
+			boolean exists = false;
+			for (Term t1 : f1.free()) {
+				if (t1.equals(t2)) {
+					exists = true;
+				}
+			}
+			if (!exists) {
+				e1 = new Product(e1, Adom(env.get(t2.toString())));
 			}
 		}
+		
 		return new Union(e1, e2);
 	}
 
@@ -103,7 +132,7 @@ public class TranslatorRC { // Translates RC into RA
 				attr = env.get(var);
 			} else {
 				attr = "A" + t.getValue();
-				env.put(var, attr); // maps variable "?x" to attribute "Ax"
+				env.put(var, attr); // maps variable "?x1" to attribute "Ax1"
 			}
 			replacements.put(attributes.get(i), attr);
 		}
