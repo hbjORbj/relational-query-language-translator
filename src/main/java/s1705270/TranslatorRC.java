@@ -235,12 +235,16 @@ public class TranslatorRC { // Translates RC into RA
 	private Expression negationToRA(Negation neg) throws TranslationException {
 		Formula f = neg.getOperand();
 		Set<Term> free = neg.free();
+		Expression exp2 = translateToRA(f);
+
 		Expression exp1 = null;
 		for (Term term : free) {
-			exp1 = new Product(exp1, Adom(env.get(term.toString())));
+			if (exp1 == null) {
+				exp1 = Adom(env.get(term.toString()));
+			} else {
+				exp1 = new Product(exp1, Adom(env.get(term.toString())));				
+			}
 		}
-		Expression exp2 = translateToRA(f);
-		
 		return new Difference(exp1, exp2);
 	}
 

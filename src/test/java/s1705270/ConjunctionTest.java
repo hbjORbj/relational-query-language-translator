@@ -25,9 +25,9 @@ class ConjunctionTest {
 	@Test
 	void classFunctionsTest() {
 		List<Term> terms = new ArrayList<>();
-		Term t1 = new Term("id", false);
-		Term t2 = new Term("name", false);
-		Term t3 = new Term("age", false);
+		Term t1 = new Term("x1", false);
+		Term t2 = new Term("x2", false);
+		Term t3 = new Term("x3", false);
 		terms.add(t1);
 		terms.add(t2);
 		terms.add(t3);
@@ -43,7 +43,7 @@ class ConjunctionTest {
 
 		assertEquals(conj.getLeftOperand(), left);
 		assertEquals(conj.getRightOperand(), right);
-		assertEquals(conj.toString(), "(User(?id,?name,?age)) & (?name = Benny)");
+		assertEquals(conj.toString(), "(User(?x1,?x2,?x3)) & (?x2 = Benny)");
 		assertEquals(conj.free(), free);
 	}
 	
