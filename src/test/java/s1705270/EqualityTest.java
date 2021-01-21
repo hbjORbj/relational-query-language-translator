@@ -62,8 +62,11 @@ class EqualityTest {
 		Expression exp = trans.Adom("Ax1");
 		exp = new Product(exp, trans.Adom("Ax3"));
 		exp = new Selection(cond, exp);
+		Expression result = trans.translate(f1);
 
-		assertEquals(trans.translate(f1).toString(), exp.toString());
+		assertEquals(result.toString(), exp.toString());
+		assertEquals(result.toString(), "<S>[Ax1 = Ax3]( ( ( <R>[id->Ax1]( <P>[id]( User ) ) <U> <R>[name->Ax1]( <P>[name]( User ) ) ) <U> <R>[age->Ax1]( <P>[age]( User ) ) ) <X> "
+				+ "( ( <R>[id->Ax3]( <P>[id]( User ) ) <U> <R>[name->Ax3]( <P>[name]( User ) ) ) <U> <R>[age->Ax3]( <P>[age]( User ) ) ) )");
 	}
 
 }
