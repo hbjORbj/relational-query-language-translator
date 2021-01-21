@@ -81,7 +81,11 @@ class PredicateTest {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		assertEquals(trans.translate(f1).toString(), exp.toString());
+		
+		Expression result = trans.translate(f1);
+
+		assertEquals(result.toString(), exp.toString());
+		assertEquals(result.toString(), "<R>[name->Ax2,id->Ax1,age->Ax3]( User )");
 	}
 	
 }
