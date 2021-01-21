@@ -59,8 +59,8 @@ class EqualityTest {
 		uk.ac.ed.pguaglia.real.lang.Term t1 = new uk.ac.ed.pguaglia.real.lang.Term("Ax1", false);
 		uk.ac.ed.pguaglia.real.lang.Term t2 = new uk.ac.ed.pguaglia.real.lang.Term("Ax3",false);
 		uk.ac.ed.pguaglia.real.lang.Equality cond = new uk.ac.ed.pguaglia.real.lang.Equality(t1,t2);
-		Expression exp = trans.Adom("Ax1");
-		exp = new Product(exp, trans.Adom("Ax3"));
+		Expression exp = trans.adom("Ax1");
+		exp = new Product(exp, trans.adom("Ax3"));
 		exp = new Selection(cond, exp);
 		Expression result = trans.translate(f1);
 

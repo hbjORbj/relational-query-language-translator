@@ -41,4 +41,9 @@ public class Term {
 		}
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {
+	    return (int) value.hashCode() * constant.hashCode();
+	}
 }

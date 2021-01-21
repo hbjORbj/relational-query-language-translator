@@ -20,10 +20,10 @@ import uk.ac.ed.pguaglia.real.lang.Intersection;
 import uk.ac.ed.pguaglia.real.lang.Renaming;
 import uk.ac.ed.pguaglia.real.lang.ReplacementException;
 
-class ConjunctionTest {
+public class ConjunctionTest {
 
 	@Test
-	void classFunctionsTest() {
+	public void classFunctionsTest() {
 		List<Term> terms = new ArrayList<>();
 		Term t1 = new Term("x1", false);
 		Term t2 = new Term("x2", false);
@@ -48,7 +48,7 @@ class ConjunctionTest {
 	}
 	
 	@Test
-	void parsingTest() {
+	public void parsingTest() {
 		Formula f1 = Formula.parse("User(?x1,?x2,?x3) & ?x2 = Benny");
 		Conjunction conj = (Conjunction) f1;
 		
@@ -93,10 +93,10 @@ class ConjunctionTest {
 		uk.ac.ed.pguaglia.real.lang.Term t1 = new uk.ac.ed.pguaglia.real.lang.Term("Ax2", false);
 		uk.ac.ed.pguaglia.real.lang.Term t2 = new uk.ac.ed.pguaglia.real.lang.Term("Benny", true);
 		uk.ac.ed.pguaglia.real.lang.Equality cond = new uk.ac.ed.pguaglia.real.lang.Equality(t1,t2);
-		Expression e2 = new Selection(cond, trans.Adom("Ax2"));
+		Expression e2 = new Selection(cond, trans.adom("Ax2"));
 
-		e2 = new Product(e2, trans.Adom("Ax3"));
-		e2 = new Product(e2, trans.Adom("Ax1"));
+		e2 = new Product(e2, trans.adom("Ax3"));
+		e2 = new Product(e2, trans.adom("Ax1"));
 		
 		Expression exp = new Intersection(e1, e2);
 		Expression result = trans.translate(f1);

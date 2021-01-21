@@ -118,6 +118,7 @@ termList
 formula
 :
 	predicateName '(' termList ')' # Predicate
+	| '(' formula ')' #ParenthesizedFormula
 	| term EQUAL term # Equality
 	| term LESSTHAN term # LessThan
 	| NEGATION formula # Negation

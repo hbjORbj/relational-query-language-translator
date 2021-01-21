@@ -3,13 +3,11 @@ package s1705270;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import uk.ac.ed.pguaglia.real.lang.BaseExpression;
-import uk.ac.ed.pguaglia.real.lang.Condition;
 import uk.ac.ed.pguaglia.real.lang.Difference;
 import uk.ac.ed.pguaglia.real.lang.Expression;
 import uk.ac.ed.pguaglia.real.lang.Intersection;
@@ -29,7 +27,18 @@ public class TranslatorRC { // Translates RC into RA
 		this.schema = sch;
 	}
 
-	public Expression Adom(String name) {
+	public Expression adom(String name) {
+		return adom(name,true);
+	}
+
+	public Expression adom(String name, boolean view) {
+		if (view) {
+			return new BaseExpression("Adom_"+name);
+		}
+		return adomExpr(name);
+	}
+
+	public Expression adomExpr(String name) {
 		Expression exp = null;
 		for (String rel : schema.getRelations()) {
 			for (String attr : schema.getAttributes(rel)) {
@@ -56,7 +65,7 @@ public class TranslatorRC { // Translates RC into RA
 
 		Expression e1 = translateToRA(f1);
 		Expression e2 = translateToRA(f2);
-		
+
 		for (Term t1 : f1.free()) {
 			boolean exists = false;
 			for (Term t2 : f2.free()) {
@@ -65,10 +74,10 @@ public class TranslatorRC { // Translates RC into RA
 				}
 			}
 			if (!exists) {
-				e2 = new Product(e2, Adom(env.get(t1.toString())));
+				e2 = new Product(e2, adom(env.get(t1.toString())));
 			}
 		}
-		
+
 		for (Term t2 : f2.free()) {
 			boolean exists = false;
 			for (Term t1 : f1.free()) {
@@ -77,7 +86,7 @@ public class TranslatorRC { // Translates RC into RA
 				}
 			}
 			if (!exists) {
-				e1 = new Product(e1, Adom(env.get(t2.toString())));
+				e1 = new Product(e1, adom(env.get(t2.toString())));
 			}
 		}
 
@@ -99,10 +108,10 @@ public class TranslatorRC { // Translates RC into RA
 				}
 			}
 			if (!exists) {
-				e2 = new Product(e2, Adom(env.get(t1.toString())));
+				e2 = new Product(e2, adom(env.get(t1.toString())));
 			}
 		}
-		
+
 		for (Term t2 : f2.free()) {
 			boolean exists = false;
 			for (Term t1 : f1.free()) {
@@ -111,10 +120,10 @@ public class TranslatorRC { // Translates RC into RA
 				}
 			}
 			if (!exists) {
-				e1 = new Product(e1, Adom(env.get(t2.toString())));
+				e1 = new Product(e1, adom(env.get(t2.toString())));
 			}
 		}
-		
+
 		return new Union(e1, e2);
 	}
 
@@ -150,7 +159,7 @@ public class TranslatorRC { // Translates RC into RA
 		List<Term> terms = ext.getTerms();
 
 		List<String> attributes = new ArrayList<>();
-		
+
 		// TO FIX: Formula.free() has duplicates even though it is a Set 
 		for (Term t1 : ext.free()) {
 			boolean exists = false;
@@ -163,10 +172,10 @@ public class TranslatorRC { // Translates RC into RA
 				attributes.add(env.get(t1.toString()));
 			}
 		}
-		
+
 		return new Projection(attributes, e);
 	}
-	
+
 	private uk.ac.ed.pguaglia.real.lang.Term termToTerm(Term t) {
 		if (t.isConstant()) {
 			return new uk.ac.ed.pguaglia.real.lang.Term(t.getValue(), true);
@@ -184,7 +193,7 @@ public class TranslatorRC { // Translates RC into RA
 		}
 		return null;
 	}
-	
+
 	private Expression equalityToRA(Equality eq) {
 		uk.ac.ed.pguaglia.real.lang.Term t1 = termToTerm(eq.getLeftTerm());
 		uk.ac.ed.pguaglia.real.lang.Term t2 = termToTerm(eq.getRightTerm());
@@ -192,46 +201,46 @@ public class TranslatorRC { // Translates RC into RA
 		if ((t1.isConstant() && t2.isConstant()) || (t1.isAttribute() && t2.isAttribute() && t1.getValue().equals(t2.getValue()))) { // No atoms of the form: c1 op c2 OR x op x
 			return null;
 		}
-		
+
 
 		uk.ac.ed.pguaglia.real.lang.Equality cond = new uk.ac.ed.pguaglia.real.lang.Equality(t1,t2);
 		Expression exp = null;
 		if (t1.isAttribute()) {
-			exp = Adom(t1.getValue());
+			exp = adom(t1.getValue());
 		}
 		if (t2.isAttribute()) {
 			if (exp == null) {
-				exp = Adom(t2.getValue());
+				exp = adom(t2.getValue());
 			} else {
-				exp = new Product(exp, Adom(t2.getValue()));
+				exp = new Product(exp, adom(t2.getValue()));
 			}
 		}
 
 		return new Selection(cond, exp);
 	}
-	
-//	private Expression lessThanToRA(LessThan eq) {
-//		uk.ac.ed.pguaglia.real.lang.Term t1 = termToTerm(eq.getLeftTerm());
-//		uk.ac.ed.pguaglia.real.lang.Term t2 = termToTerm(eq.getRightTerm());
-//		if ((t1.isConstant() && t2.isConstant()) || (t1 == t2)) { // No atoms of the form: c1 op c2 OR x op x
-//			return null;
-//		}
-//		
-//		uk.ac.ed.pguaglia.real.lang.LessThan cond = new uk.ac.ed.pguaglia.real.lang.LessThan(t1,t2); // RA LessThan Class is needed
-//		Expression exp = null;
-//		if (t1.isAttribute()) {
-//			exp = Adom(t1.getValue());
-//		}
-//		if (t2.isAttribute()) {
-//			if (exp == null) {
-//				exp = Adom(t2.getValue());
-//			} else {
-//				exp = new Product(exp, Adom(t2.getValue()));
-//			}
-//		}
-//		return new Selection(cond, exp);
-//	}
-	
+
+	//	private Expression lessThanToRA(LessThan eq) {
+	//		uk.ac.ed.pguaglia.real.lang.Term t1 = termToTerm(eq.getLeftTerm());
+	//		uk.ac.ed.pguaglia.real.lang.Term t2 = termToTerm(eq.getRightTerm());
+	//		if ((t1.isConstant() && t2.isConstant()) || (t1 == t2)) { // No atoms of the form: c1 op c2 OR x op x
+	//			return null;
+	//		}
+	//		
+	//		uk.ac.ed.pguaglia.real.lang.LessThan cond = new uk.ac.ed.pguaglia.real.lang.LessThan(t1,t2); // RA LessThan Class is needed
+	//		Expression exp = null;
+	//		if (t1.isAttribute()) {
+	//			exp = Adom(t1.getValue());
+	//		}
+	//		if (t2.isAttribute()) {
+	//			if (exp == null) {
+	//				exp = Adom(t2.getValue());
+	//			} else {
+	//				exp = new Product(exp, Adom(t2.getValue()));
+	//			}
+	//		}
+	//		return new Selection(cond, exp);
+	//	}
+
 	private Expression negationToRA(Negation neg) throws TranslationException {
 		Formula f = neg.getOperand();
 		Set<Term> free = neg.free();
@@ -240,9 +249,9 @@ public class TranslatorRC { // Translates RC into RA
 		Expression exp1 = null;
 		for (Term term : free) {
 			if (exp1 == null) {
-				exp1 = Adom(env.get(term.toString()));
+				exp1 = adom(env.get(term.toString()));
 			} else {
-				exp1 = new Product(exp1, Adom(env.get(term.toString())));				
+				exp1 = new Product(exp1, adom(env.get(term.toString())));				
 			}
 		}
 		return new Difference(exp1, exp2);

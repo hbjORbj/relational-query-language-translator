@@ -1,11 +1,8 @@
 package s1705270;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import uk.ac.ed.pguaglia.real.lang.Expression;
 
 public class App {
 
@@ -47,12 +44,27 @@ public class App {
 //		}
 //		Formula f2 = Formula.parse("[E]?x,?y(R(?x,?y))");
 //		System.out.println(f2);
+		
+//		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
+//		map.put("Customer", Arrays.asList(new String[] {"CustID","Name"}));
+//		map.put("Account", Arrays.asList(new String[] {"Number", "CustID"}));
+//		Schema sch = new Schema(map);
+//		TranslatorRC trans = new TranslatorRC(sch);
+//		Formula f1 = Formula.parse("[E]?x4(Customer(?x1,?x2) & Account(?x3,?x4) & ?x1 = ?x4)");
+//
+//		try {
+//			System.out.println(trans.translate(f1));
+//		} catch (TranslationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
 		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
-		map.put("Customer", Arrays.asList(new String[] {"CustID","Name"}));
-		map.put("Account", Arrays.asList(new String[] {"Number", "CustID"}));
+		map.put("R", Arrays.asList(new String[] {"A"}));
+		map.put("S", Arrays.asList(new String[] {"A","B"}));
 		Schema sch = new Schema(map);
 		TranslatorRC trans = new TranslatorRC(sch);
-		Formula f1 = Formula.parse("[E]?x4(Customer(?x1,?x2) & Account(?x3,?x4) & ?x1 = ?x4)");
+		Formula f1 = Formula.parse("R(?x) & ~([E]?y(S(?y,?z)))");
 
 		try {
 			System.out.println(trans.translate(f1));

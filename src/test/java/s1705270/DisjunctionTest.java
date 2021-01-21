@@ -93,9 +93,9 @@ class DisjunctionTest {
 		uk.ac.ed.pguaglia.real.lang.Term t1 = new uk.ac.ed.pguaglia.real.lang.Term("Ax2", false);
 		uk.ac.ed.pguaglia.real.lang.Term t2 = new uk.ac.ed.pguaglia.real.lang.Term("Benny", true);
 		uk.ac.ed.pguaglia.real.lang.Equality cond = new uk.ac.ed.pguaglia.real.lang.Equality(t1,t2);
-		Expression e2 = new Selection(cond, trans.Adom("Ax2"));
-		e2 = new Product(e2, trans.Adom("Ax1"));
-		e2 = new Product(e2, trans.Adom("Ax3"));
+		Expression e2 = new Selection(cond, trans.adom("Ax2"));
+		e2 = new Product(e2, trans.adom("Ax1"));
+		e2 = new Product(e2, trans.adom("Ax3"));
 		
 		Expression exp = new Union(e1, e2);
 		Expression result = trans.translate(f1);
