@@ -188,10 +188,12 @@ public class TranslatorRC { // Translates RC into RA
 	private Expression equalityToRA(Equality eq) {
 		uk.ac.ed.pguaglia.real.lang.Term t1 = termToTerm(eq.getLeftTerm());
 		uk.ac.ed.pguaglia.real.lang.Term t2 = termToTerm(eq.getRightTerm());
-		if ((t1.isConstant() && t2.isConstant()) || (t1 == t2)) { // No atoms of the form: c1 op c2 OR x op x
+
+		if ((t1.isConstant() && t2.isConstant()) || (t1.isAttribute() && t2.isAttribute() && t1.getValue().equals(t2.getValue()))) { // No atoms of the form: c1 op c2 OR x op x
 			return null;
 		}
 		
+
 		uk.ac.ed.pguaglia.real.lang.Equality cond = new uk.ac.ed.pguaglia.real.lang.Equality(t1,t2);
 		Expression exp = null;
 		if (t1.isAttribute()) {
@@ -204,6 +206,7 @@ public class TranslatorRC { // Translates RC into RA
 				exp = new Product(exp, Adom(t2.getValue()));
 			}
 		}
+
 		return new Selection(cond, exp);
 	}
 	
