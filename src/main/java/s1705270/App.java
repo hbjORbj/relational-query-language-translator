@@ -1,8 +1,14 @@
 package s1705270;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import org.antlr.v4.runtime.RecognitionException;
+
+import uk.ac.ed.pguaglia.real.lang.Expression;
+import uk.ac.ed.pguaglia.real.lang.ReplacementException;
 
 public class App {
 
@@ -59,18 +65,34 @@ public class App {
 //			e.printStackTrace();
 //		}
 
-		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
-		map.put("R", Arrays.asList(new String[] {"A"}));
-		map.put("S", Arrays.asList(new String[] {"A","B"}));
-		Schema sch = new Schema(map);
-		TranslatorRC trans = new TranslatorRC(sch);
-		Formula f1 = Formula.parse("R(?x) & ~([E]?y(S(?y,?z)))");
+//		HashMap<String,List<String>> map1 = new HashMap<String, List<String>>();
+//		map1.put("R", Arrays.asList(new String[] {"A", "B"}));
+//		Schema sch1 = new Schema(map1);
+//		TranslatorRC trans1 = new TranslatorRC(sch1);
+//		Formula f1 = Formula.parse("~([E]?y(~([E]?z(~(R(?x,?y)) | R(?y,?z)))))");
+//
+//		try {
+//			System.out.println(trans1.translate(f1));
+//		} catch (TranslationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		HashMap<String,List<String>> map1 = new HashMap<String, List<String>>();
+		map1.put("R", Arrays.asList(new String[] {"B"}));
+		map1.put("S", Arrays.asList(new String[] {"A", "C"}));
+
+		Schema sch1 = new Schema(map1);
+		TranslatorRC trans1 = new TranslatorRC(sch1);
+		Formula f1 = Formula.parse("R(?x) | ([E]?z(S(?x,?z)) & ~(R(?z)))");
 
 		try {
-			System.out.println(trans.translate(f1));
+			System.out.println(trans1.translate(f1));
 		} catch (TranslationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+
 	}
 }

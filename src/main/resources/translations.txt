@@ -1,0 +1,9 @@
+[E]?x4(Customer(?x1,?x2) & Account(?x3,?x4) & ?x1 = ?x4)
+<P>[Ax3,Ax2,Ax1]( ( ( ( <R>[CustID->Ax1,Name->Ax2]( Customer ) <X> Adom_Ax3 ) <X> Adom_Ax4 ) <I> ( ( <R>[Number->Ax3,CustID->Ax4]( Account ) <X> Adom_Ax2 ) <X> Adom_Ax1 ) ) <I> ( ( <S>[Ax1 = Ax4]( Adom_Ax1 <X> Adom_Ax4 ) <X> Adom_Ax3 ) <X> Adom_Ax2 ) )
+R(?x) & ~([E]?y(S(?y,?z)))
+( <R>[A->Ax]( R ) <X> Adom_Az ) <I> ( ( Adom_Az <D> <P>[Az]( <R>[A->Ay,B->Az]( S ) ) ) <X> Adom_Ax )
+R(?x) | ([E]?z(S(?x,?z)) & ~(R(?z)))
+( <R>[B->Ax]( R ) <X> Adom_Az ) <U> ( ( <P>[Ax]( <R>[A->Ax,C->Az]( S ) ) <X> Adom_Az ) <I> ( ( Adom_Az <D> <R>[B->Az]( R ) ) <X> Adom_Ax ) )
+~([E]?y(~([E]?z(~(R(?x,?y)) | R(?y,?z)))))
+( Adom_Ax <X> Adom_Ay ) <D> <P>[Ax,Ay]( ( Adom_Ax <X> Adom_Ay ) <D> <P>[Ax,Ay]( ( ( ( Adom_Ax <X> Adom_Ay ) <D> <R>[A->Ax,B->Ay]( R ) ) <X> Adom_Az ) <U> ( <R>[A->Ay,B->Az]( R ) <X> Adom_Ax ) ) )
+

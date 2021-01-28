@@ -1,0 +1,4 @@
+Customer:CustID Name,Account:Number CustID
+R:A,S:A B
+R:B,S:A C
+R:A B,
