@@ -77,19 +77,16 @@ public class App {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		
-		HashMap<String,List<String>> map1 = new HashMap<String, List<String>>();
-		map1.put("R", Arrays.asList(new String[] {"B"}));
-		map1.put("S", Arrays.asList(new String[] {"A", "C"}));
 
-		Schema sch1 = new Schema(map1);
-		TranslatorRC trans1 = new TranslatorRC(sch1);
-		Formula f1 = Formula.parse("R(?x) | ([E]?z(S(?x,?z)) & ~(R(?z)))");
+		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
+		map.put("R", Arrays.asList(new String[] {"A","B"}));
 
+		Schema sch = new Schema(map);
+		TranslatorRC trans = new TranslatorRC(sch);
+		Formula f = Formula.parse("~([E]?y(~([E]?z((~(R(?x,?y))) | R(?y,?z)))))");
 		try {
-			System.out.println(trans1.translate(f1));
+			System.out.println(trans.translate(f));
 		} catch (TranslationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

@@ -40,7 +40,7 @@ public class TranslationTest {
 
 	// take care of schemas
 	// maybe another file needed for RA/RC pairs
-	public TranslationTest(File f) throws FileNotFoundException { 
+//	public TranslationTest(File f) throws FileNotFoundException { 
 		// read file f with pairs (stringRC_i, stringRA_i) of RC/RA strings
 		// for each pair (stringRC_i, stringRA_i):
 		//   parse RC string stringRC_i to get Formula formula_i
@@ -48,7 +48,7 @@ public class TranslationTest {
 		//   put (formula_i,expr_i) into translationPairs map
 		
 		// similarly for RA->RC
-	}
+//	}
 	
 	@BeforeAll
 	public static void prepareTestCases() throws FileNotFoundException, ReplacementException {
@@ -65,15 +65,15 @@ public class TranslationTest {
 			if (schemas.hasNextLine()) {
 				String schema = schemas.nextLine();
 				String[] relations = schema.split(",");
+				HashMap<String,List<String>> map = new HashMap<String, List<String>>();
 
 				for (String relation : relations) {
 					Integer idx = relation.indexOf(":");
 					String name = relation.substring(0, idx);
 					String attrString = relation.substring(idx + 1);
-					HashMap<String,List<String>> map = new HashMap<String, List<String>>();
 					map.put(name, Arrays.asList(attrString.split(" ")));
-					schemaPairsRC.put(f, new Schema(map));
 				}
+				schemaPairsRC.put(f, new Schema(map));
 			}
         }
 	}
@@ -85,7 +85,8 @@ public class TranslationTest {
 		//   compare trans_expr_i.toString() with expr_i.toString()
 		for (Formula f : translationPairsRC.keySet()) {
 			try {
-				TranslatorRC trans = new TranslatorRC(schemaPairsRC.get(f));
+				Schema sch = schemaPairsRC.get(f);
+				TranslatorRC trans = new TranslatorRC(sch);
 				assertEquals(trans.translate(f).toString(), translationPairsRC.get(f).toString());
 			} catch (TranslationException e) {
 				// TODO Auto-generated catch block

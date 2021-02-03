@@ -4,6 +4,5 @@ R(?x) & ~([E]?y(S(?y,?z)))
 ( <R>[A->Ax]( R ) <X> Adom_Az ) <I> ( ( Adom_Az <D> <P>[Az]( <R>[A->Ay,B->Az]( S ) ) ) <X> Adom_Ax )
 R(?x) | ([E]?z(S(?x,?z)) & ~(R(?z)))
 ( <R>[B->Ax]( R ) <X> Adom_Az ) <U> ( ( <P>[Ax]( <R>[A->Ax,C->Az]( S ) ) <X> Adom_Az ) <I> ( ( Adom_Az <D> <R>[B->Az]( R ) ) <X> Adom_Ax ) )
-~([E]?y(~([E]?z(~(R(?x,?y)) | R(?y,?z)))))
-( Adom_Ax <X> Adom_Ay ) <D> <P>[Ax,Ay]( ( Adom_Ax <X> Adom_Ay ) <D> <P>[Ax,Ay]( ( ( ( Adom_Ax <X> Adom_Ay ) <D> <R>[A->Ax,B->Ay]( R ) ) <X> Adom_Az ) <U> ( <R>[A->Ay,B->Az]( R ) <X> Adom_Ax ) ) )
-
+~([E]?y(~([E]?z((~(R(?x,?y))) | R(?y,?z)))))
+Adom_Ax <D> <P>[Ax]( ( Adom_Ax <X> Adom_Ay ) <D> <P>[Ax,Ay]( ( ( ( Adom_Ax <X> Adom_Ay ) <D> <R>[A->Ax,B->Ay]( R ) ) <X> Adom_Az ) <U> ( <R>[A->Ay,B->Az]( R ) <X> Adom_Ax ) ) )
