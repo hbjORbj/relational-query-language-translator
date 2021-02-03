@@ -16,6 +16,7 @@ public class RCListenerImpl extends RCBaseListener {
 	private List<Term> termList = null;
 	private Stack<Term> termStack = new Stack<Term>();
 	private List<Term> varList = null;
+	private Stack<List<Term>> varListStack = new Stack<List<Term>>();
 	private Formula parsedFormula = null;
 
 	public Formula parsedFormula() {
@@ -50,6 +51,11 @@ public class RCListenerImpl extends RCBaseListener {
 	@Override
 	public void enterVariableList(RCParser.VariableListContext ctx) {
 		varList = new ArrayList<Term>();
+	}
+	
+	@Override
+	public void exitVariableList(RCParser.VariableListContext ctx) {
+		varListStack.push(varList);
 	}
 
 	@Override public void exitConstant(RCParser.ConstantContext ctx) {
@@ -122,6 +128,7 @@ public class RCListenerImpl extends RCBaseListener {
 	@Override
 	public void exitExistentialQuantifier(RCParser.ExistentialQuantifierContext ctx) {
 		Formula f = formulaStack.pop();
+		
 //		Set<Term> free = f.free();
 //		for (Term var : varList) {
 //			if (boundVarList.contains(var)) { // another quantifier is already binding this variable
@@ -140,7 +147,7 @@ public class RCListenerImpl extends RCBaseListener {
 //				throw new RuntimeException("No variable name can occur both free and bound.");
 //			}
 //		}
-		formulaStack.push(new Existential(varList, f));
+		formulaStack.push(new Existential(varListStack.pop(), f));
 	}
 
 	@Override
