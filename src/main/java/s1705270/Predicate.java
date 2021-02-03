@@ -30,8 +30,6 @@ public class Predicate extends Formula {
 		for (Term t : terms) {
 			list.add(t.toString());
 		}
-		System.out.println(list);
-		System.out.println(name);
 		return String.format("%s(%s)", name, String.join(",", list));
 	}
 

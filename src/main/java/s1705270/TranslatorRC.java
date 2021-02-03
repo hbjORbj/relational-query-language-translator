@@ -33,7 +33,7 @@ public class TranslatorRC { // Translates RC into RA
 
 	public Expression adom(String name, boolean view) {
 		if (view) {
-			return new BaseExpression("Adom_"+name);
+			return new BaseExpression("Adom_" + name);
 		}
 		return adomExpr(name);
 	}
@@ -62,31 +62,21 @@ public class TranslatorRC { // Translates RC into RA
 	private Expression conjunctionToRA(Conjunction conj) throws TranslationException {
 		Formula f1 = conj.getLeftOperand();
 		Formula f2 = conj.getRightOperand();
+		Set<Term> free1 = f1.free();
+		Set<Term> free2 = f2.free();
 
 		Expression e1 = translateToRA(f1);
 		Expression e2 = translateToRA(f2);
 
-		for (Term t1 : f1.free()) {
-			boolean exists = false;
-			for (Term t2 : f2.free()) {
-				if (t1.equals(t2)) {
-					exists = true;
-				}
-			}
-			if (!exists) {
-				e2 = new Product(e2, adom(env.get(t1.toString())));
+		for (Term term : free2) {
+			if (!free1.contains(term)) {
+				e1 = new Product(e1, adom(env.get(term.toString())));
 			}
 		}
 
-		for (Term t2 : f2.free()) {
-			boolean exists = false;
-			for (Term t1 : f1.free()) {
-				if (t1.equals(t2)) {
-					exists = true;
-				}
-			}
-			if (!exists) {
-				e1 = new Product(e1, adom(env.get(t2.toString())));
+		for (Term term : free1) {
+			if (!free2.contains(term)) {
+				e2 = new Product(e2, adom(env.get(term.toString())));
 			}
 		}
 
@@ -96,31 +86,21 @@ public class TranslatorRC { // Translates RC into RA
 	private Expression disjunctionToRA(Disjunction disj) throws TranslationException {
 		Formula f1 = disj.getLeftOperand();
 		Formula f2 = disj.getRightOperand();
-
+		Set<Term> free1 = f1.free();
+		Set<Term> free2 = f2.free();
+		
 		Expression e1 = translateToRA(f1);
 		Expression e2 = translateToRA(f2);
 
-		for (Term t1 : f1.free()) {
-			boolean exists = false;
-			for (Term t2 : f2.free()) {
-				if (t1.equals(t2)) {
-					exists = true;
-				}
-			}
-			if (!exists) {
-				e2 = new Product(e2, adom(env.get(t1.toString())));
+		for (Term term : free2) {
+			if (!free1.contains(term)) {
+				e1 = new Product(e1, adom(env.get(term.toString())));
 			}
 		}
 
-		for (Term t2 : f2.free()) {
-			boolean exists = false;
-			for (Term t1 : f1.free()) {
-				if (t1.equals(t2)) {
-					exists = true;
-				}
-			}
-			if (!exists) {
-				e1 = new Product(e1, adom(env.get(t2.toString())));
+		for (Term term : free1) {
+			if (!free2.contains(term)) {
+				e2 = new Product(e2, adom(env.get(term.toString())));
 			}
 		}
 
@@ -156,21 +136,10 @@ public class TranslatorRC { // Translates RC into RA
 		Formula f = ext.getOperand();
 		Expression e = translateToRA(f);
 
-		List<Term> terms = ext.getTerms();
-
+		Set<Term> free = ext.free();
 		List<String> attributes = new ArrayList<>();
-
-		// TO FIX: Formula.free() has duplicates even though it is a Set 
-		for (Term t1 : ext.free()) {
-			boolean exists = false;
-			for (Term t2 : terms) {
-				if (t1.equals(t2)) {
-					exists = true;
-				}
-			}
-			if (!exists && !attributes.contains(env.get(t1.toString()))) {
-				attributes.add(env.get(t1.toString()));
-			}
+		for (Term term : free) {
+			attributes.add(env.get(term.toString()));
 		}
 
 		return new Projection(attributes, e);
