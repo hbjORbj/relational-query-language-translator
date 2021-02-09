@@ -2,3 +2,7 @@ Customer:CustID Name,Account:Number CustID
 R:A,S:A B
 R:B,S:A C
 R:A B,
+R:A,S:A B
+R:A B,S:A B
+R:A B,S:B C
+R:A B C,S:C
