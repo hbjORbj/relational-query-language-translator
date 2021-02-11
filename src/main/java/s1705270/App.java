@@ -80,16 +80,16 @@ public class App {
 		
 		// Check the following test case with Professor
 		// Q from 2018 December Exam
-//		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
-//		map.put("R", Arrays.asList(new String[] {"A", "B"}));
-//		map.put("S", Arrays.asList(new String[] {"B", "C"}));
-//		Schema sch = new Schema(map);
-//		TranslatorRC trans = new TranslatorRC(sch);
-//		Formula f = Formula.parse("[E]?y(R(?y,?x)) & ~([E]?z(S(?x,?z) & ~(R(?z,?y))))");
-//		try {
-//			System.out.println(trans.translate(f));
-//		} catch (TranslationException e) {
-//			e.printStackTrace();
-//		}
+		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
+		map.put("R", Arrays.asList(new String[] {"A", "B"}));
+		map.put("S", Arrays.asList(new String[] {"B", "C"}));
+		Schema sch = new Schema(map);
+		TranslatorRC trans = new TranslatorRC(sch);
+		Formula f = Formula.parse("[E]?y( R(?y,?x) & ~( [E]?z (S(?x,?z) & ~(R(?z,?y)) )))");
+		try {
+			System.out.println(trans.translate(f));
+		} catch (TranslationException e) {
+			e.printStackTrace();
+		}
 	}
 }
