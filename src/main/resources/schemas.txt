@@ -5,4 +5,3 @@ R:A B,
 R:A,S:A B
 R:A B,S:A B
 R:A B,S:B C
-R:A B C,S:C

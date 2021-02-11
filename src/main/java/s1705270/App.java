@@ -77,6 +77,8 @@ public class App {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+		
+		// Check the following test case with Professor
 		// Q from 2018 December Exam
 //		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
 //		map.put("R", Arrays.asList(new String[] {"A", "B"}));
@@ -89,18 +91,5 @@ public class App {
 //		} catch (TranslationException e) {
 //			e.printStackTrace();
 //		}
-		
-		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
-		map.put("R", Arrays.asList(new String[] {"A", "B","C"}));
-		map.put("S", Arrays.asList(new String[] {"C"}));
-		Schema sch = new Schema(map);
-		TranslatorRC trans = new TranslatorRC(sch);
-		Formula f = Formula.parse("[E]?a(R(?x,?z,?a)) & ~([E]?y,?z(R(?x,?y,?z)) & S(?z) & (?x = ?z | ?x = 1))");
-		try {
-			System.out.println(trans.translate(f));
-		} catch (TranslationException e) {
-			e.printStackTrace();
-		}
-
 	}
 }
