@@ -28,6 +28,17 @@ NAME
 	)*
 ;
 
+CONSTANT
+:
+	DIGIT |
+	LETTER+
+	(
+		LETTER
+		| DIGIT
+		| '_'
+	)*
+;
+
 WHITESPACE
 :
 	[ \t\r\n]+ -> skip
@@ -93,7 +104,7 @@ variableList
 
 constant
 :
-	NAME
+	CONSTANT
 ;
 
 predicateName
