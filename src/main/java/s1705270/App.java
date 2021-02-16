@@ -12,7 +12,7 @@ import uk.ac.ed.pguaglia.real.lang.ReplacementException;
 
 public class App {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws RecognitionException, ReplacementException {
 //		Term x = new Term("x", false);
 //		Term y = new Term("y", false);
 //		Term c = new Term("c", true);
@@ -78,18 +78,42 @@ public class App {
 //			e.printStackTrace();
 //		}
 		
+//		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
+//		map.put("R", Arrays.asList(new String[] {"A", "B"}));
+//		map.put("S", Arrays.asList(new String[] {"B", "C"}));
+//		Schema sch = new Schema(map);
+//		TranslatorRC trans = new TranslatorRC(sch);
+//		Formula f = Formula.parse("[E]?y( R(?y,?x) & ~( [E]?z (S(?x,?z) & ~(R(?z,?y)) )))");
+//		try {
+//			System.out.println(trans.translate(f));
+//		} catch (TranslationException e) {
+//			e.printStackTrace();
+//		}
+		
 		// Check the following test case with Professor
-		// Q from 2018 December Exam
+//		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
+//		map.put("R", Arrays.asList(new String[] {"A", "B","C"}));
+//		map.put("S", Arrays.asList(new String[] {"C"}));
+//		Schema sch = new Schema(map);
+//		TranslatorRA trans = new TranslatorRA(sch);
+//		Expression e = Expression.parse("<R>[B->C](<P>[A,B](R)) <D> <S>[A = C | A = 1](<P>[A](R) <X> (S))");
+//		try {
+//			System.out.println(trans.translate(e));
+//		} catch (TranslationException error) {
+//			error.printStackTrace();
+//		}
+		
+		// Check the following test case with Professor
 		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
-		map.put("R", Arrays.asList(new String[] {"A", "B"}));
-		map.put("S", Arrays.asList(new String[] {"B", "C"}));
+		map.put("R", Arrays.asList(new String[] {"A", "B","C"}));
+		map.put("S", Arrays.asList(new String[] {"C"}));
 		Schema sch = new Schema(map);
-		TranslatorRC trans = new TranslatorRC(sch);
-		Formula f = Formula.parse("[E]?y( R(?y,?x) & ~( [E]?z (S(?x,?z) & ~(R(?z,?y)) )))");
+		TranslatorRA trans = new TranslatorRA(sch);
+		Expression e = Expression.parse("<P>[A](R)");
 		try {
-			System.out.println(trans.translate(f));
-		} catch (TranslationException e) {
-			e.printStackTrace();
+			System.out.println(trans.translate(e));
+		} catch (TranslationException error) {
+			error.printStackTrace();
 		}
 	}
 }
