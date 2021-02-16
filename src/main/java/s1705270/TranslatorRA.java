@@ -19,7 +19,6 @@ import uk.ac.ed.pguaglia.real.lang.Union;
 public class TranslatorRA { // Translates RA into RC
 
 	private Schema schema;
-	private Map<String,String> env; // Attribute -> Variable
 
 	public TranslatorRA(Schema sch) {
 		this.schema = sch;
@@ -30,14 +29,7 @@ public class TranslatorRA { // Translates RA into RC
 		List<Term> terms = new ArrayList<>();
 		List<String> attrs = schema.getAttributes(name);
 		for (String attr : attrs) {
-			String var = null;
-			if (env.containsKey(attr)) {
-				var = env.get(attr);
-			} else {
-				var = "?" + attr;
-				env.put(attr, var); // maps attribute "A" to variable "?A"
-			}
-			Term t = new Term(var, false);
+			Term t = new Term(attr, false);
 			terms.add(t);
 		}
 		return new Predicate(name, terms);
@@ -56,8 +48,7 @@ public class TranslatorRA { // Translates RA into RC
 			List<Term> terms = new ArrayList<>();
 			
 			for (String attr : attrs) {
-				String var = env.get(attr);
-				Term t = new Term(var, false);
+				Term t = new Term(attr, false);
 				if (free.contains(t)) {
 					free.remove(t);
 				}
@@ -120,8 +111,8 @@ public class TranslatorRA { // Translates RA into RC
 	private Formula equalityToRC(uk.ac.ed.pguaglia.real.lang.Equality c) { // RA Equality needs these methods: getLeftTerm() and getRightTerm()
 		uk.ac.ed.pguaglia.real.lang.Term leftTerm = c.getLeftTerm();
 		uk.ac.ed.pguaglia.real.lang.Term rightTerm = c.getRightTerm();
-		Term t1 = new Term(env.get(leftTerm.getValue()), leftTerm.isConstant());
-		Term t2 = new Term(env.get(rightTerm.getValue()), rightTerm.isConstant());
+		Term t1 = new Term(leftTerm.getValue(), leftTerm.isConstant());
+		Term t2 = new Term(rightTerm.getValue(), rightTerm.isConstant());
 		return new Equality(t1, t2);
 	}
 	
@@ -170,7 +161,6 @@ public class TranslatorRA { // Translates RA into RC
 	}
 	
 	public Formula translate(Expression e) throws TranslationException {
-		this.env  = new HashMap<>(); // Attribute -> Variable
 		return translateToRC(e);
 	}
 }
