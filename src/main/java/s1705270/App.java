@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.RecognitionException;
 
+import uk.ac.ed.pguaglia.real.db.SchemaException;
 import uk.ac.ed.pguaglia.real.lang.Expression;
 import uk.ac.ed.pguaglia.real.lang.ReplacementException;
 
@@ -109,11 +110,15 @@ public class App {
 		map.put("S", Arrays.asList(new String[] {"C"}));
 		Schema sch = new Schema(map);
 		TranslatorRA trans = new TranslatorRA(sch);
-		Expression e = Expression.parse("<P>[A](R)");
+		Expression e = Expression.parse("<P>[A,B](R) <X> S");
 		try {
+			e.signature(sch.convert());
 			System.out.println(trans.translate(e));
 		} catch (TranslationException error) {
 			error.printStackTrace();
+		} catch (SchemaException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
 }
