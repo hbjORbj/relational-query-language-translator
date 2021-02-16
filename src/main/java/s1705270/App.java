@@ -110,7 +110,7 @@ public class App {
 		map.put("S", Arrays.asList(new String[] {"C"}));
 		Schema sch = new Schema(map);
 		TranslatorRA trans = new TranslatorRA(sch);
-		Expression e = Expression.parse("<P>[A,B](R) <X> S");
+		Expression e = Expression.parse("<P>[A](<P>[A](R))");
 		try {
 			e.signature(sch.convert());
 			System.out.println(trans.translate(e));

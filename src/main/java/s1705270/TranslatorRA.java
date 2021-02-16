@@ -1,9 +1,8 @@
 package s1705270;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import uk.ac.ed.pguaglia.real.db.SchemaException;
@@ -45,18 +44,16 @@ public class TranslatorRA { // Translates RA into RC
 				throw new TranslationException(e1.getMessage());
 			}
 			Formula f = translateToRC(e);
-			Set<Term> free = f.free();
-			List<Term> terms = new ArrayList<>();
-			
-			for (String attr : attrs) {
-				Term t = new Term(attr, false);
-				if (free.contains(t)) {
-					free.remove(t);
+			List<Term> existentialVars = new ArrayList<>();
+			for (Term freeVar : f.free()) {
+				if (attrs.contains(freeVar.getValue()) == false) {
+					existentialVars.add(freeVar);
 				}
 			}
-			terms.addAll(free);
-		
-			return new Existential(terms, f);
+			if (existentialVars.isEmpty()) {
+				return f;
+			}
+			return new Existential(existentialVars, f);
 	}
 	
 	private Formula selectionToRC(Selection sel) throws TranslationException { 
