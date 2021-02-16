@@ -11,6 +11,7 @@ import uk.ac.ed.pguaglia.real.lang.BaseExpression;
 import uk.ac.ed.pguaglia.real.lang.Condition;
 import uk.ac.ed.pguaglia.real.lang.Difference;
 import uk.ac.ed.pguaglia.real.lang.Expression;
+import uk.ac.ed.pguaglia.real.lang.Intersection;
 import uk.ac.ed.pguaglia.real.lang.Product;
 import uk.ac.ed.pguaglia.real.lang.Projection;
 import uk.ac.ed.pguaglia.real.lang.Selection;
@@ -74,6 +75,14 @@ public class TranslatorRA { // Translates RA into RC
 		return new Conjunction(f1, f2);
 	}
 	
+	private Formula intersectionToRC(Intersection inter) throws TranslationException { 
+		Expression left = inter.getLeftOperand();
+		Expression right = inter.getRightOperand();
+		Formula f1 = translateToRC(left);
+		Formula f2 = translateToRC(right);
+		return new Conjunction(f1, f2);
+	}
+	
 	private Formula unionToRC(Union uni) throws TranslationException { 
 		Expression left = uni.getLeftOperand();
 		Expression right = uni.getRightOperand();
@@ -99,6 +108,8 @@ public class TranslatorRA { // Translates RA into RC
 			return selectionToRC((Selection) e);
 		} else if (e instanceof Product) { 
 			return productToRC((Product) e);
+		} else if (e instanceof Intersection) { 
+			return intersectionToRC((Intersection) e);
 		} else if (e instanceof Union) { 
 			return unionToRC((Union) e);
 		} else if (e instanceof Difference) {  
