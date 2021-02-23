@@ -1,8 +1,9 @@
 package s1705270;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import uk.ac.ed.pguaglia.real.db.SchemaException;
@@ -13,12 +14,14 @@ import uk.ac.ed.pguaglia.real.lang.Expression;
 import uk.ac.ed.pguaglia.real.lang.Intersection;
 import uk.ac.ed.pguaglia.real.lang.Product;
 import uk.ac.ed.pguaglia.real.lang.Projection;
+import uk.ac.ed.pguaglia.real.lang.Renaming;
 import uk.ac.ed.pguaglia.real.lang.Selection;
 import uk.ac.ed.pguaglia.real.lang.Union;
 
 public class TranslatorRA { // Translates RA into RC
 
 	private Schema schema;
+	private Map<String,String> env; // Attribute -> Variable
 
 	public TranslatorRA(Schema sch) {
 		this.schema = sch;
@@ -29,7 +32,15 @@ public class TranslatorRA { // Translates RA into RC
 		List<Term> terms = new ArrayList<>();
 		List<String> attrs = schema.getAttributes(name);
 		for (String attr : attrs) {
-			Term t = new Term(attr, false);
+			String var = null;
+			if (!env.containsKey(attr)) {
+				var = "?" + attr;
+				env.put(attr, var); // maps attribute "A" to variable "?A"
+			} else {
+				var = env.get(attr);
+			}
+
+			Term t = new Term(var.substring(1), false);
 			terms.add(t);
 		}
 		return new Predicate(name, terms);
@@ -62,6 +73,21 @@ public class TranslatorRA { // Translates RA into RC
 		Formula f1 = translateToRC(e);
 		Formula f2 = translateToRC(cond);
 		return new Conjunction(f1, f2);
+	}
+	
+	private Formula renamingToRC(Renaming ren) throws TranslationException {
+		Expression e = ren.getOperand();
+		Formula f = translateToRC(e);
+		Map<String,String> replacements = ren.getReplacements(); // Need this to be implemented
+		for (String fromAttr : replacements.keySet()) {
+			String toAttr = replacements.get(fromAttr);
+			if (!env.containsKey(toAttr)) {
+				String var = "?" + toAttr;
+				env.put(toAttr, var);
+			}
+			f = renameFormula(f, fromAttr, toAttr);
+		}
+		return f;
 	}
 	
 	private Formula productToRC(Product prod) throws TranslationException { 
@@ -103,6 +129,8 @@ public class TranslatorRA { // Translates RA into RC
 			return projectionToRC((Projection) e);
 		} else if (e instanceof Selection) {
 			return selectionToRC((Selection) e);
+		} else if (e instanceof Renaming) {
+			return renamingToRC((Renaming) e);
 		} else if (e instanceof Product) { 
 			return productToRC((Product) e);
 		} else if (e instanceof Intersection) { 
@@ -116,11 +144,104 @@ public class TranslatorRA { // Translates RA into RC
 		}
 	}
 	
+	private Formula renameConjunction(Conjunction conj, String fromAttr, String toAttr) throws TranslationException { 
+		Formula f1 = conj.getLeftOperand();
+		Formula f2 = conj.getRightOperand();
+		f1 = renameFormula(f1, fromAttr, toAttr);
+		f2 = renameFormula(f2, fromAttr, toAttr);
+		return new Conjunction(f1, f2);
+	}
+	
+	private Formula renameDisjunction(Disjunction disj, String fromAttr, String toAttr) throws TranslationException { 
+		Formula f1 = disj.getLeftOperand();
+		Formula f2 = disj.getRightOperand();
+		f1 = renameFormula(f1, fromAttr, toAttr);
+		f2 = renameFormula(f2, fromAttr, toAttr);
+		return new Disjunction(f1, f2);
+	}
+	
+	private Formula renameExistential(Existential exist, String fromAttr, String toAttr) throws TranslationException { 
+		Formula operand = exist.getOperand();
+		List<Term> terms = exist.getTerms();
+		List<Term> newTerms = new ArrayList<Term>();
+		
+		for (Term t : terms) {
+			if (t.getValue().equals(fromAttr)) {
+				newTerms.add(new Term(toAttr, false));
+			} else if (t.getValue().equals(toAttr)) {
+				newTerms.add(new Term(toAttr + "2", false));
+			} else {
+				newTerms.add(t);
+			}
+		}
+		
+		operand = renameFormula(operand, fromAttr, toAttr);
+		return new Existential(newTerms, operand);
+	}
+	
+	private Formula renamePredicate(Predicate pred, String fromAttr, String toAttr) throws TranslationException { 
+		String name = pred.getName();
+		List<Term> terms = pred.getTerms();
+		List<Term> newTerms = new ArrayList<Term>();
+		for (Term t : terms) {
+			if (t.getValue().equals(fromAttr)) {
+				newTerms.add(new Term(toAttr, false));
+			} else if (t.getValue().equals(toAttr)) {
+				newTerms.add(new Term(toAttr + "2", false));
+			} else {
+				newTerms.add(t);
+			}
+		}
+		return new Predicate(name, newTerms);
+	}
+	
+	private Formula renameEquality(Equality eq, String fromAttr, String toAttr) throws TranslationException { 
+		Term leftTerm = eq.getLeftTerm();
+		Term rightTerm = eq.getRightTerm();
+		if (leftTerm.getValue().equals(fromAttr)) {
+			leftTerm = new Term(toAttr, leftTerm.isConstant());
+		}
+		if (rightTerm.getValue().equals(fromAttr)) {
+			rightTerm = new Term(toAttr, rightTerm.isConstant());
+		}
+		if (leftTerm.getValue().equals(toAttr)) {
+			leftTerm = new Term(toAttr + "2", leftTerm.isConstant());
+		}
+		if (rightTerm.getValue().equals(toAttr)) {
+			rightTerm = new Term(toAttr + "2", rightTerm.isConstant());
+		}
+		return new Equality(leftTerm, rightTerm);
+	}
+	
+	private Formula renameNegation(Negation neg, String fromAttr, String toAttr) throws TranslationException { 
+		Formula operand = neg.getOperand();
+		operand = renameFormula(operand, fromAttr, toAttr);
+		return new Negation(operand);
+	}
+	
+	private Formula renameFormula( Formula f, String fromAttr, String toAttr ) throws TranslationException {
+		if (f instanceof Conjunction) {
+			return renameConjunction((Conjunction) f, fromAttr, toAttr);
+		} else if (f instanceof Disjunction) {
+			return renameDisjunction((Disjunction) f, fromAttr, toAttr);
+		} else if (f instanceof Existential) {
+			return renameExistential((Existential) f, fromAttr, toAttr);
+		} else if (f instanceof Predicate) {
+			return renamePredicate((Predicate) f, fromAttr, toAttr);
+		} else if (f instanceof Equality) {
+			return renameEquality((Equality) f, fromAttr, toAttr);
+		} else if (f instanceof Negation) {
+			return renameNegation((Negation) f, fromAttr, toAttr);
+		} else { // we should never reach this point
+			throw new RuntimeException("Unknown kind of formula");
+		}
+	}
+	
 	private Formula equalityToRC(uk.ac.ed.pguaglia.real.lang.Equality c) { // RA Equality needs these methods: getLeftTerm() and getRightTerm()
 		uk.ac.ed.pguaglia.real.lang.Term leftTerm = c.getLeftTerm();
 		uk.ac.ed.pguaglia.real.lang.Term rightTerm = c.getRightTerm();
-		Term t1 = new Term(leftTerm.getValue(), leftTerm.isConstant());
-		Term t2 = new Term(rightTerm.getValue(), rightTerm.isConstant());
+		Term t1 = new Term(env.get(leftTerm.getValue()).substring(1), leftTerm.isConstant());
+		Term t2 = new Term(env.get(rightTerm.getValue()).substring(1), rightTerm.isConstant());
 		return new Equality(t1, t2);
 	}
 	
@@ -169,6 +290,7 @@ public class TranslatorRA { // Translates RA into RC
 	}
 	
 	public Formula translate(Expression e) throws TranslationException {
+		this.env  = new HashMap<>(); // Attribute -> Variable
 		return translateToRC(e);
 	}
 }
