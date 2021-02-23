@@ -33,4 +33,17 @@ public class Universal extends Formula {
 		}
 		return free;
 	}
+
+	@Override
+	public Formula validRename(Term x, Term y) {
+		List<Term> newTerms = new ArrayList<Term>();
+		for (Term t : terms) {
+			if (t.equals(x)) {
+				newTerms.add(new Term(y.getValue(), y.isConstant()));
+			} else {
+				newTerms.add(new Term(x.getValue(), x.isConstant()));
+			}
+		}
+		return new Universal(newTerms, operand.validRename(x, y));
+	}
 }

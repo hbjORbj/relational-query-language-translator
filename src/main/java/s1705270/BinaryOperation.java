@@ -21,7 +21,7 @@ public abstract class BinaryOperation extends Formula {
 	public Formula getRightOperand() {
 		return this.rightOperand;
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.format("(%s) %s (%s)", leftOperand, this.getType().getConnective(), rightOperand);
@@ -33,5 +33,4 @@ public abstract class BinaryOperation extends Formula {
 		free.addAll(rightOperand.free());
 		return free;
 	}
-
 }

@@ -11,7 +11,7 @@ public class Negation extends Formula {
 		super(Formula.Type.NEGATION);
 		this.operand = operand;
 	}
-	
+
 	public Formula getOperand() {
 		return this.operand;
 	}
@@ -25,5 +25,10 @@ public class Negation extends Formula {
 		Set<Term> free = new HashSet<>();
 		free.addAll(operand.free());
 		return free;
+	}
+
+	@Override
+	public Formula validRename(Term x, Term y) {
+		return new Negation(operand.validRename(x, y));
 	}
 }

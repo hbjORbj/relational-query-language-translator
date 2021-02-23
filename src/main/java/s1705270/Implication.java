@@ -6,4 +6,10 @@ public class Implication extends BinaryOperation {
 		super(left, right, Formula.Type.IMPLICATION);
 	}
 
+	@Override
+	public Formula validRename(Term x, Term y) {
+		Formula renamedLeft = leftOperand.validRename(x, y);
+		Formula renamedRight = rightOperand.validRename(x, y);
+		return new Implication(renamedLeft, renamedRight);
+	}
 }

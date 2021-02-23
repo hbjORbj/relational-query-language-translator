@@ -9,8 +9,6 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import uk.ac.ed.pguaglia.real.parsing.RALexer;
-
 public abstract class Formula {
 	
 	public static Formula parse(String s) throws RecognitionException {
@@ -71,5 +69,14 @@ public abstract class Formula {
 	}
 
 	public abstract Set<Term> free();
-
+	
+	public Formula rename(Term x, Term y) throws Exception {
+		if (x.isConstant() != y.isConstant()) {
+			throw new Exception("Renaming variable to constant or constant to variable!");
+		} else {
+			return validRename(x, y);
+		}
+	}
+	
+	public abstract Formula validRename(Term x, Term y);
 }

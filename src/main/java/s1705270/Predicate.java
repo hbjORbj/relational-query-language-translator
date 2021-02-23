@@ -42,4 +42,17 @@ public class Predicate extends Formula {
 		}
 		return free;
 	}
+
+	@Override
+	public Formula validRename(Term x, Term y) {
+		List<Term> newTerms = new ArrayList<Term>();
+		for (Term t : terms) {
+			if (t.equals(x)) {
+				newTerms.add(new Term(y.getValue(), y.isConstant()));
+			} else {
+				newTerms.add(new Term(t.getValue(), t.isConstant()));
+			}
+		}
+		return new Predicate(name, newTerms);
+	}
 }

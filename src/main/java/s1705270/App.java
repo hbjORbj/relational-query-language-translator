@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.RecognitionException;
 
+import uk.ac.ed.pguaglia.real.db.SchemaException;
 import uk.ac.ed.pguaglia.real.lang.Expression;
 import uk.ac.ed.pguaglia.real.lang.ReplacementException;
 
@@ -78,12 +79,14 @@ public class App {
 //			e.printStackTrace();
 //		}
 		
-//		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
-//		map.put("R", Arrays.asList(new String[] {"A", "B"}));
-//		map.put("S", Arrays.asList(new String[] {"B", "C"}));
-//		Schema sch = new Schema(map);
-//		TranslatorRC trans = new TranslatorRC(sch);
-//		Formula f = Formula.parse("[E]?y( R(?y,?x) & ~( [E]?z (S(?x,?z) & ~(R(?z,?y)) )))");
+		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
+		map.put("R", Arrays.asList(new String[] {"A", "B"}));
+		map.put("S", Arrays.asList(new String[] {"B", "C"}));
+		Schema sch = new Schema(map);
+		TranslatorRC trans = new TranslatorRC(sch);
+		//Formula f = Formula.parse("[E]?y( R(?y,?x) & ~( [E]?z (S(?x,?z) & ~(R(?z,?y)) )))");
+		Formula f = Formula.parse("[E]?C'( R(?A,?C,?C') )");
+		System.out.println(f);
 //		try {
 //			System.out.println(trans.translate(f));
 //		} catch (TranslationException e) {
@@ -96,10 +99,13 @@ public class App {
 //		map.put("S", Arrays.asList(new String[] {"C"}));
 //		Schema sch = new Schema(map);
 //		TranslatorRA trans = new TranslatorRA(sch);
-//		Expression e = Expression.parse("<R>[B->C](<P>[A,B](R)) <D> <S>[A = C | A = 1](<P>[A](R) <X> (S))");
+////		Expression e = Expression.parse("<R>[A->B,B->C,C->A](R)");
+////		Expression e = Expression.parse("<R>[C->A](<R>[B->C](<R>[A->B](R)))");
+//		Expression e = Expression.parse("<R>[B->C](<P>[A,B](R))");
 //		try {
+//			e.signature(sch.convert());
 //			System.out.println(trans.translate(e));
-//		} catch (TranslationException error) {
+//		} catch (TranslationException | SchemaException error) {
 //			error.printStackTrace();
 //		}
 		
