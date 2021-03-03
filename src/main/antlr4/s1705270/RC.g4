@@ -25,12 +25,13 @@ NAME
 		LETTER
 		| DIGIT
 		| '_'
+		| '\''
 	)*
 ;
 
 CONSTANT
 :
-	DIGIT |
+	DIGIT+ |
 	LETTER+
 	(
 		LETTER
