@@ -1,17 +1,99 @@
 package s1705270;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import uk.ac.ed.pguaglia.real.db.SchemaException;
 import uk.ac.ed.pguaglia.real.lang.Expression;
 import uk.ac.ed.pguaglia.real.lang.ReplacementException;
+import uk.ac.ed.pguaglia.real.parsing.RALexer;
+import uk.ac.ed.pguaglia.real.parsing.RAParser;
 
 public class App {
+	
+	private static RAParser getParserRA(String s) {
+		RALexer lexer = new RALexer(CharStreams.fromString(s));
+		//lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
+		RAParser parser = new RAParser(new CommonTokenStream(lexer));
+		parser.setErrorHandler(new BailErrorStrategy());
+		//parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+		return parser;
+	}
+	
+	private static RCParser getParserRC(String s) {
+		RCLexer lexer = new RCLexer(CharStreams.fromString(s));
+		//lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
+		RCParser parser = new RCParser(new CommonTokenStream(lexer));
+		parser.setErrorHandler(new BailErrorStrategy());
+		//parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+		return parser;
+	}
 
+	public static Schema parseSchema(String str) {
+		HashMap<String,List<String>> map = new HashMap<>();
+		for (String spec : str.split(";")) {
+			int k = spec.indexOf(":");
+			String relation = spec.substring(0,k).trim();
+			ArrayList<String> attributes = new ArrayList<>();
+			for (String attr : spec.substring(k+1).split(",")) {
+				attributes.add(attr.trim());
+			}
+			map.put(relation,attributes);
+		}
+		return new Schema(map);
+	}
+	
+	public static Map<String,String> parseEnvironment(String str) {
+		HashMap<String,String> map = new HashMap<>();
+		for (String mapping : str.split(",")) {
+			String[] pair = mapping.split("->");
+			String k = pair[0].trim();
+			String v = pair[1].trim();
+			map.put(k,v);
+		}
+		return map;
+	}
+	
+	public static boolean validateEnvRA(Map<String,String> map, Schema sch) {
+		for (String k : map.keySet()) {
+			RAParser pRA = getParserRA(k);
+			try {
+				pRA.attribute();
+			} catch (RuntimeException e) {
+				Throwable cause = e.getCause();
+				if (cause instanceof RecognitionException) {
+					throw (RecognitionException) cause;
+				} else {
+					throw e;
+				}
+			}
+			RCParser pRC = getParserRC(map.get(k));
+			try {
+				pRC.variable();
+			} catch (RuntimeException e) {
+				Throwable cause = e.getCause();
+				if (cause instanceof RecognitionException) {
+					throw (RecognitionException) cause;
+				} else {
+					throw e;
+				}
+			}
+		}
+		// TODO: check that environment is injective (if done elsewhere, consider moving here)
+		// TODO: validate with schema (e.g., check all attributes are mapped)
+		return true;
+	}
+	
 	public static void main(String[] args) throws RecognitionException, ReplacementException {
 // 		RC -> RA Example
 //		HashMap<String,List<String>> map1 = new HashMap<String, List<String>>();
@@ -27,7 +109,35 @@ public class App {
 //			e.printStackTrace();
 //		}
 		
-//		RA -> RC with custom environment
+		Scanner scan = new Scanner(System.in);
+		System.out.print("INPUT SCHEMA: ");
+		String inputSchema = "R:A,B,C;S:B,C"; //scan.nextLine();
+		Schema sch = parseSchema(inputSchema);
+		for (String r : sch.getRelations()) {
+			System.out.println(r + sch.getAttributes(r));
+		}
+		System.out.print("INPUT EXPRESSION: ");
+		String inputExpr = scan.nextLine();
+		Expression e = Expression.parse(inputExpr);
+		System.out.println(e);
+		TranslatorRA trans = new TranslatorRA(sch);
+		System.out.print("INPUT ENVIROMENT (empty line for default): ");
+		String inputEnv = scan.nextLine();
+		Map<String,String> env = new HashMap<>();
+		System.out.println(env);
+		if (inputEnv.isEmpty() == false) {
+			env = parseEnvironment(inputEnv);
+		}
+		System.out.println(validateEnvRA(env, sch));
+		try {
+			e.signature(sch.convert());
+			System.out.println(trans.translate(e, env));
+		} catch (TranslationException | SchemaException error) {
+			error.printStackTrace();
+		}
+		scan.close();
+		
+		// RA -> RC with custom environment
 //		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
 //		map.put("R", Arrays.asList(new String[] {"A", "B","C"}));
 //		map.put("S", Arrays.asList(new String[] {"C"}));
