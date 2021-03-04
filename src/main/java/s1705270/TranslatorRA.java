@@ -2,6 +2,7 @@ package s1705270;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,16 +49,20 @@ public class TranslatorRA { // Translates RA into RC
 	
 	private Formula projectionToRC(Projection proj) throws TranslationException {
 			Expression e = proj.getOperand();
+			Formula f = translateToRC(e);
 			Set<String> attrs;
+			Set<String> vars = new HashSet<String>();
 			try {
 				attrs = proj.signature(schema.convert());
 			} catch (SchemaException e1) {
 				throw new TranslationException(e1.getMessage());
 			}
-			Formula f = translateToRC(e);
+			for (String attr : attrs) {
+				vars.add(env.get(attr).substring(1));
+			}
 			List<Term> existentialVars = new ArrayList<>();
 			for (Term freeVar : f.free()) {
-				if (attrs.contains(freeVar.getValue()) == false) {
+				if (vars.contains(freeVar.getValue()) == false) {
 					existentialVars.add(freeVar);
 				}
 			}
@@ -88,9 +93,9 @@ public class TranslatorRA { // Translates RA into RC
 				String var = "?" + toAttr;
 				env.put(toAttr, var);
 			}
-			Term from = new Term(fromAttr, false);
-			Term to = new Term(toAttr, false);
-			Term primed = new Term(toAttr + "'", false);
+			Term from = new Term(env.get(fromAttr).substring(1), false);
+			Term to = new Term(env.get(toAttr).substring(1), false);
+			Term primed = new Term(env.get(toAttr).substring(1) + "'", false);
 			try {
 				f = f.rename(to, primed);
 				f = f.rename(from, to);
@@ -165,8 +170,10 @@ public class TranslatorRA { // Translates RA into RC
 		} else {
 			if (!env.containsKey(leftTerm.getValue())) {
 				env.put(leftTerm.getValue(), "?" + leftTerm.getValue());
+				t1 = new Term(leftTerm.getValue(), false);
+			} else {
+				t1 = new Term(env.get(leftTerm.getValue()).substring(1), false);
 			}
-			t1 = new Term(leftTerm.getValue(), false);
 		}
 		
 		if (rightTerm.isConstant()) {
@@ -174,8 +181,10 @@ public class TranslatorRA { // Translates RA into RC
 		} else {
 			if (!env.containsKey(rightTerm.getValue())) {
 				env.put(rightTerm.getValue(), "?" + rightTerm.getValue());
+				t2 = new Term(rightTerm.getValue(), false);
+			} else {
+				t2 = new Term(env.get(rightTerm.getValue()).substring(1), false);
 			}
-			t2 = new Term(rightTerm.getValue(), false);
 		}
 		return new Equality(t1, t2);
 	}
@@ -224,8 +233,14 @@ public class TranslatorRA { // Translates RA into RC
 		}
 	}
 	
-	public Formula translate(Expression e) throws TranslationException {
-		this.env  = new HashMap<>(); // Attribute -> Variable
+	public Formula translate(Expression e, Map<String,String> env) throws TranslationException {
+		if (env.size() > 0) {
+			Set<String> set = new HashSet<String>(env.values());
+			if (set.size() != env.size()) {
+				throw new TranslationException("No two keys can have the same value in environment.");
+			}
+		}
+		this.env  = env; // Attribute -> Variable
 		return translateToRC(e);
 	}
 }

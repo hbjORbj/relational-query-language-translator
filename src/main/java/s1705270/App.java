@@ -27,19 +27,38 @@ public class App {
 //			e.printStackTrace();
 //		}
 		
-		// RA -> RC Example
-		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
-		map.put("R", Arrays.asList(new String[] {"A", "B","C"}));
-		map.put("S", Arrays.asList(new String[] {"C"}));
-		Schema sch = new Schema(map);
-		TranslatorRA trans = new TranslatorRA(sch);
-		Expression e = Expression.parse("<R>[B->C](<P>[A,B](R)) <D> <S>[A = C | A = '1'](<P>[A](R) <X> (S))");
-		try {
-			e.signature(sch.convert());
-			System.out.println(trans.translate(e));
-		} catch (TranslationException | SchemaException error) {
-			error.printStackTrace();
-		}
+//		RA -> RC with custom environment
+//		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
+//		map.put("R", Arrays.asList(new String[] {"A", "B","C"}));
+//		map.put("S", Arrays.asList(new String[] {"C"}));
+//		Schema sch = new Schema(map);
+//		TranslatorRA trans = new TranslatorRA(sch);
+//		Expression e = Expression.parse("<R>[B->C](<P>[A,B](R)) <D> <S>[A = C | A = '1'](<P>[A](R) <X> (S))");
+//		HashMap<String,String> env = new HashMap<String, String>();
+//		env.put("A", "?x");
+//		env.put("B", "?y");
+//		env.put("C", "?z");
+//		try {
+//			e.signature(sch.convert());
+//			System.out.println(trans.translate(e, env));
+//		} catch (TranslationException | SchemaException error) {
+//			error.printStackTrace();
+//		}
+		
+//		RA -> RC with no custom environment
+//		HashMap<String,List<String>> map = new HashMap<String, List<String>>();
+//		map.put("R", Arrays.asList(new String[] {"A", "B","C"}));
+//		map.put("S", Arrays.asList(new String[] {"C"}));
+//		Schema sch = new Schema(map);
+//		TranslatorRA trans = new TranslatorRA(sch);
+//		Expression e = Expression.parse("<R>[B->C](<P>[A,B](R)) <D> <S>[A = C | A = '1'](<P>[A](R) <X> (S))");
+//		HashMap<String,String> env = new HashMap<String, String>();
+//		try {
+//			e.signature(sch.convert());
+//			System.out.println(trans.translate(e, env));
+//		} catch (TranslationException | SchemaException error) {
+//			error.printStackTrace();
+//		}
 		
 	}
 }
