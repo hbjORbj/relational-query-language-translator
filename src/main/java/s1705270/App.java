@@ -2,9 +2,11 @@ package s1705270;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CharStreams;
@@ -64,7 +66,8 @@ public class App {
 		return map;
 	}
 	
-	public static boolean validateEnvRA(Map<String,String> map, Schema sch) {
+	public static boolean validateEnvRA(Map<String,String> map, Schema sch) throws TranslationException {
+		// Check that attribute given follows the rule specified in parser
 		for (String k : map.keySet()) {
 			RAParser pRA = getParserRA(k);
 			try {
@@ -89,12 +92,19 @@ public class App {
 				}
 			}
 		}
-		// TODO: check that environment is injective (if done elsewhere, consider moving here)
+		
+		// Check that given environment is injective
+		if (map.size() > 0) {
+			Set<String> set = new HashSet<String>(map.values());
+			if (set.size() != map.size()) {
+				throw new TranslationException("No two keys can have the same value in environment.");
+			}
+		}
 		// TODO: validate with schema (e.g., check all attributes are mapped)
 		return true;
 	}
 	
-	public static void main(String[] args) throws RecognitionException, ReplacementException {
+	public static void main(String[] args) throws RecognitionException, ReplacementException, TranslationException {
 // 		RC -> RA Example
 //		HashMap<String,List<String>> map1 = new HashMap<String, List<String>>();
 //		map1.put("R", Arrays.asList(new String[] {"A", "B"}));

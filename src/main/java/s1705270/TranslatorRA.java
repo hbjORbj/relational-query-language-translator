@@ -1,7 +1,6 @@
 package s1705270;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,7 @@ public class TranslatorRA { // Translates RA into RC
 		this.schema = sch;
 	}
 	
-	private Formula baseExprToRC(BaseExpression e) {
+	private Formula baseExprToRC(BaseExpression e) throws TranslationException {
 		String name = e.toString();
 		List<Term> terms = new ArrayList<>();
 		List<String> attrs = schema.getAttributes(name);
@@ -36,6 +35,9 @@ public class TranslatorRA { // Translates RA into RC
 			String var = null;
 			if (!env.containsKey(attr)) {
 				var = "?" + attr;
+				if (env.values().contains(var)) {
+					throw new TranslationException("No two keys can have the same value in environment.");
+				}
 				env.put(attr, var); // maps attribute "A" to variable "?A"
 			} else {
 				var = env.get(attr);
@@ -160,7 +162,7 @@ public class TranslatorRA { // Translates RA into RC
 		}
 	}
 	
-	private Formula equalityToRC(uk.ac.ed.pguaglia.real.lang.Equality c) {
+	private Formula equalityToRC(uk.ac.ed.pguaglia.real.lang.Equality c) throws TranslationException {
 		uk.ac.ed.pguaglia.real.lang.Term leftTerm = c.getLeftTerm();
 		uk.ac.ed.pguaglia.real.lang.Term rightTerm = c.getRightTerm();
 		Term t1 = null;
@@ -169,7 +171,11 @@ public class TranslatorRA { // Translates RA into RC
 			t1 = new Term(leftTerm.getValue().replace("'", ""), true);
 		} else {
 			if (!env.containsKey(leftTerm.getValue())) {
-				env.put(leftTerm.getValue(), "?" + leftTerm.getValue());
+				String var1 = "?" + leftTerm.getValue();
+				if (env.values().contains(var1)) {
+					throw new TranslationException("No two keys can have the same value in environment.");
+				}
+				env.put(leftTerm.getValue(), var1);
 				t1 = new Term(leftTerm.getValue(), false);
 			} else {
 				t1 = new Term(env.get(leftTerm.getValue()).substring(1), false);
@@ -180,7 +186,11 @@ public class TranslatorRA { // Translates RA into RC
 			t2 = new Term(rightTerm.getValue().replace("'", ""), true);
 		} else {
 			if (!env.containsKey(rightTerm.getValue())) {
-				env.put(rightTerm.getValue(), "?" + rightTerm.getValue());
+				String var2 = "?" + rightTerm.getValue();
+				if (env.values().contains(var2)) {
+					throw new TranslationException("No two keys can have the same value in environment.");
+				}
+				env.put(rightTerm.getValue(), var2);
 				t2 = new Term(rightTerm.getValue(), false);
 			} else {
 				t2 = new Term(env.get(rightTerm.getValue()).substring(1), false);
@@ -197,7 +207,7 @@ public class TranslatorRA { // Translates RA into RC
 //		return new LessThan(t1, t2);
 //	}
 	
-	private Formula conjunctionToRC(uk.ac.ed.pguaglia.real.lang.Conjunction c) {
+	private Formula conjunctionToRC(uk.ac.ed.pguaglia.real.lang.Conjunction c) throws TranslationException {
 		Condition leftCond = c.getLeftCondition();
 		Condition rightCond = c.getRightCondition();
 		Formula f1 = translateToRC(leftCond);
@@ -205,7 +215,7 @@ public class TranslatorRA { // Translates RA into RC
 		return new Conjunction(f1, f2);
 	}
 	
-	private Formula disjunctionToRC(uk.ac.ed.pguaglia.real.lang.Disjunction c) {
+	private Formula disjunctionToRC(uk.ac.ed.pguaglia.real.lang.Disjunction c) throws TranslationException {
 		Condition leftCond = c.getLeftCondition();
 		Condition rightCond = c.getRightCondition();
 		Formula f1 = translateToRC(leftCond);
@@ -213,13 +223,13 @@ public class TranslatorRA { // Translates RA into RC
 		return new Disjunction(f1, f2);
 	}
 	
-	private Formula negationToRC(uk.ac.ed.pguaglia.real.lang.Negation c) {
+	private Formula negationToRC(uk.ac.ed.pguaglia.real.lang.Negation c) throws TranslationException {
 		Condition cond = c.getCondition();
 		Formula f = translateToRC(cond);
 		return new Negation(f);
 	}
 	
-	public Formula translateToRC( Condition c ) {
+	public Formula translateToRC( Condition c ) throws TranslationException {
 		if (c instanceof uk.ac.ed.pguaglia.real.lang.Equality) {
 			return equalityToRC((uk.ac.ed.pguaglia.real.lang.Equality) c);
 		} else if (c instanceof uk.ac.ed.pguaglia.real.lang.Conjunction) {
@@ -234,12 +244,6 @@ public class TranslatorRA { // Translates RA into RC
 	}
 	
 	public Formula translate(Expression e, Map<String,String> env) throws TranslationException {
-		if (env.size() > 0) {
-			Set<String> set = new HashSet<String>(env.values());
-			if (set.size() != env.size()) {
-				throw new TranslationException("No two keys can have the same value in environment.");
-			}
-		}
 		this.env  = env; // Attribute -> Variable
 		return translateToRC(e);
 	}
