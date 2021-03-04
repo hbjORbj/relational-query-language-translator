@@ -1,14 +1,12 @@
 (<S>[A = C | B = C](<P>[A,B](R) <X> S)) <U> (S <X> <R>[C->A](S) <X> <R>[C->B](S) <D> R)
-ERROR
+((([E]?C( R(?A,?B,?C) )) & (S(?C))) & ((?A = ?C) | (?B = ?C))) | ((((S(?C)) & (S(?A))) & (S(?B))) & (~(R(?A,?B,?C))))
 (R <D> (S <X> <P>[A,B](R))) <I> (<S>[A = C | A = B](<R>[C->A](S) <X> <P>[B,C](R)))
-ERROR
-<R>[B->C](<P>[A,B](R)) <D> <S>[A = C | A = 1](<P>[A](R) <X> (S))
+((R(?A,?B,?C)) & (~((S(?C)) & ([E]?C( R(?A,?B,?C) ))))) & (((S(?A)) & ([E]?A( R(?A,?B,?C) ))) & ((?A = ?C) | (?A = ?B)))
+<R>[B->C](<P>[A,B](R)) <D> <S>[A = C | A = '1'](<P>[A](R) <X> (S))
 ERROR
 <R>[A->C](<P>[A](R)) <D> S
-ERROR
+([E]?B,?C'( R(?C,?B,?C') )) & (~(S(?C)))
 <P>[A,B](<S>[A = C | B = C](<P>[A,B](R) <X> S))
-ERROR
-<P>[A,B,C](<S>[A = D & B = E & ~(C = F)](R <X> <R>[A->D,B->E,C->F](R)))
-ERROR 
-((R <D> S) <X> <P>[A,B](R)) <I> (<S>[A = C | A = B](<R>[C->A](S) <X> <P>[B,C](R)))
-ERROR
+[E]?C( (([E]?C( R(?A,?B,?C) )) & (S(?C))) & ((?A = ?C) | (?B = ?C)) )
+<P>[A,B,C](<S>[A = D & B = E & ~(C = F)](R <X> <R>[C->F](<R>[B->E](<R>[A->D](R)))))
+[E]?D,?E,?F( ((R(?A,?B,?C)) & (R(?D,?E,?F))) & (((?A = ?D) & (?B = ?E)) & (~(?C = ?F))) )  
