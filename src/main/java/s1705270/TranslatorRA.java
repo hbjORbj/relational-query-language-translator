@@ -155,104 +155,28 @@ public class TranslatorRA { // Translates RA into RC
 		}
 	}
 	
-//	private Formula renameConjunction(Conjunction conj, String fromAttr, String toAttr) throws TranslationException { 
-//		Formula f1 = conj.getLeftOperand();
-//		Formula f2 = conj.getRightOperand();
-//		f1 = renameFormula(f1, fromAttr, toAttr);
-//		f2 = renameFormula(f2, fromAttr, toAttr);
-//		return new Conjunction(f1, f2);
-//	}
-//	
-//	private Formula renameDisjunction(Disjunction disj, String fromAttr, String toAttr) throws TranslationException { 
-//		Formula f1 = disj.getLeftOperand();
-//		Formula f2 = disj.getRightOperand();
-//		f1 = renameFormula(f1, fromAttr, toAttr);
-//		f2 = renameFormula(f2, fromAttr, toAttr);
-//		return new Disjunction(f1, f2);
-//	}
-//	
-//	private Formula renameExistential(Existential exist, String fromAttr, String toAttr) throws TranslationException { 
-//		Formula operand = exist.getOperand();
-//		List<Term> terms = exist.getTerms();
-//		List<Term> newTerms = new ArrayList<Term>();
-//		
-//		for (Term t : terms) {
-//			if (t.getValue().equals(fromAttr)) {
-//				newTerms.add(new Term(toAttr, false));
-//			} else if (t.getValue().equals(toAttr)) {
-//				newTerms.add(new Term(toAttr + "2", false));
-//			} else {
-//				newTerms.add(t);
-//			}
-//		}
-//		
-//		operand = renameFormula(operand, fromAttr, toAttr);
-//		return new Existential(newTerms, operand);
-//	}
-//	
-//	private Formula renamePredicate(Predicate pred, String fromAttr, String toAttr) throws TranslationException { 
-//		String name = pred.getName();
-//		List<Term> terms = pred.getTerms();
-//		List<Term> newTerms = new ArrayList<Term>();
-//		for (Term t : terms) {
-//			if (t.getValue().equals(fromAttr)) {
-//				newTerms.add(new Term(toAttr, false));
-//			} else if (t.getValue().equals(toAttr)) {
-//				newTerms.add(new Term(toAttr + "2", false));
-//			} else {
-//				newTerms.add(t);
-//			}
-//		}
-//		return new Predicate(name, newTerms);
-//	}
-//	
-//	private Formula renameEquality(Equality eq, String fromAttr, String toAttr) throws TranslationException { 
-//		Term leftTerm = eq.getLeftTerm();
-//		Term rightTerm = eq.getRightTerm();
-//		if (leftTerm.getValue().equals(fromAttr)) {
-//			leftTerm = new Term(toAttr, leftTerm.isConstant());
-//		}
-//		if (rightTerm.getValue().equals(fromAttr)) {
-//			rightTerm = new Term(toAttr, rightTerm.isConstant());
-//		}
-//		if (leftTerm.getValue().equals(toAttr)) {
-//			leftTerm = new Term(toAttr + "2", leftTerm.isConstant());
-//		}
-//		if (rightTerm.getValue().equals(toAttr)) {
-//			rightTerm = new Term(toAttr + "2", rightTerm.isConstant());
-//		}
-//		return new Equality(leftTerm, rightTerm);
-//	}
-//	
-//	private Formula renameNegation(Negation neg, String fromAttr, String toAttr) throws TranslationException { 
-//		Formula operand = neg.getOperand();
-//		operand = renameFormula(operand, fromAttr, toAttr);
-//		return new Negation(operand);
-//	}
-	
-//	private Formula renameFormula( Formula f, String fromAttr, String toAttr ) throws TranslationException {
-//		if (f instanceof Conjunction) {
-//			return renameConjunction((Conjunction) f, fromAttr, toAttr);
-//		} else if (f instanceof Disjunction) {
-//			return renameDisjunction((Disjunction) f, fromAttr, toAttr);
-//		} else if (f instanceof Existential) {
-//			return renameExistential((Existential) f, fromAttr, toAttr);
-//		} else if (f instanceof Predicate) {
-//			return renamePredicate((Predicate) f, fromAttr, toAttr);
-//		} else if (f instanceof Equality) {
-//			return renameEquality((Equality) f, fromAttr, toAttr);
-//		} else if (f instanceof Negation) {
-//			return renameNegation((Negation) f, fromAttr, toAttr);
-//		} else { // we should never reach this point
-//			throw new RuntimeException("Unknown kind of formula");
-//		}
-//	}
-	
-	private Formula equalityToRC(uk.ac.ed.pguaglia.real.lang.Equality c) { // RA Equality needs these methods: getLeftTerm() and getRightTerm()
+	private Formula equalityToRC(uk.ac.ed.pguaglia.real.lang.Equality c) {
 		uk.ac.ed.pguaglia.real.lang.Term leftTerm = c.getLeftTerm();
 		uk.ac.ed.pguaglia.real.lang.Term rightTerm = c.getRightTerm();
-		Term t1 = new Term(env.get(leftTerm.getValue()).substring(1), leftTerm.isConstant());
-		Term t2 = new Term(env.get(rightTerm.getValue()).substring(1), rightTerm.isConstant());
+		Term t1 = null;
+		Term t2 = null;
+		if (leftTerm.isConstant()) {
+			t1 = new Term(leftTerm.getValue().replace("'", ""), true);
+		} else {
+			if (!env.containsKey(leftTerm.getValue())) {
+				env.put(leftTerm.getValue(), "?" + leftTerm.getValue());
+			}
+			t1 = new Term(leftTerm.getValue(), false);
+		}
+		
+		if (rightTerm.isConstant()) {
+			t2 = new Term(rightTerm.getValue().replace("'", ""), true);
+		} else {
+			if (!env.containsKey(rightTerm.getValue())) {
+				env.put(rightTerm.getValue(), "?" + rightTerm.getValue());
+			}
+			t2 = new Term(rightTerm.getValue(), false);
+		}
 		return new Equality(t1, t2);
 	}
 	
@@ -264,7 +188,7 @@ public class TranslatorRA { // Translates RA into RC
 //		return new LessThan(t1, t2);
 //	}
 	
-	private Formula conjunctionToRC(uk.ac.ed.pguaglia.real.lang.Conjunction c) { // RA Conjunction needs these methods: getLeftCondtion() and getRightCondition()
+	private Formula conjunctionToRC(uk.ac.ed.pguaglia.real.lang.Conjunction c) {
 		Condition leftCond = c.getLeftCondition();
 		Condition rightCond = c.getRightCondition();
 		Formula f1 = translateToRC(leftCond);
@@ -272,7 +196,7 @@ public class TranslatorRA { // Translates RA into RC
 		return new Conjunction(f1, f2);
 	}
 	
-	private Formula disjunctionToRC(uk.ac.ed.pguaglia.real.lang.Disjunction c) { // RA Disjunction needs these methods: getLeftCondtion() and getRightCondition()
+	private Formula disjunctionToRC(uk.ac.ed.pguaglia.real.lang.Disjunction c) {
 		Condition leftCond = c.getLeftCondition();
 		Condition rightCond = c.getRightCondition();
 		Formula f1 = translateToRC(leftCond);
@@ -281,7 +205,7 @@ public class TranslatorRA { // Translates RA into RC
 	}
 	
 	private Formula negationToRC(uk.ac.ed.pguaglia.real.lang.Negation c) {
-		Condition cond = c.getCondition(); // RA Negation needs getCondition() method
+		Condition cond = c.getCondition();
 		Formula f = translateToRC(cond);
 		return new Negation(f);
 	}
