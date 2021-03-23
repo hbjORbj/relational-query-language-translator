@@ -100,7 +100,7 @@ public class App {
 				throw new TranslationException("No two keys can have the same value in environment.");
 			}
 		}
-		// TODO: validate with schema (e.g., check all attributes are mapped)
+		// TODO: give a warning for each attribute in the environment that is not among the attributes in the schema
 		return true;
 	}
 	
@@ -121,7 +121,7 @@ public class App {
 		
 		Scanner scan = new Scanner(System.in);
 		System.out.print("INPUT SCHEMA: ");
-		String inputSchema = "R:A,B,C;S:B,C"; //scan.nextLine();
+		String inputSchema = "R:A,B,C;S:D,C"; //scan.nextLine();
 		Schema sch = parseSchema(inputSchema);
 		for (String r : sch.getRelations()) {
 			System.out.println(r + sch.getAttributes(r));
@@ -134,7 +134,6 @@ public class App {
 		System.out.print("INPUT ENVIROMENT (empty line for default): ");
 		String inputEnv = scan.nextLine();
 		Map<String,String> env = new HashMap<>();
-		System.out.println(env);
 		if (inputEnv.isEmpty() == false) {
 			env = parseEnvironment(inputEnv);
 		}
