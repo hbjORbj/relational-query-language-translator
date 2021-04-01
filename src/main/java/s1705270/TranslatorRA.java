@@ -170,31 +170,13 @@ public class TranslatorRA { // Translates RA into RC
 		if (leftTerm.isConstant()) {
 			t1 = new Term(leftTerm.getValue().replace("'", ""), true);
 		} else {
-//			if (!env.containsKey(leftTerm.getValue())) {
-//				String var1 = "?" + leftTerm.getValue();
-//				while (env.values().contains(var1)) {
-//					var1 += "'";
-//				}
-//				env.put(leftTerm.getValue(), var1);
-//				t1 = new Term(leftTerm.getValue(), false);
-//			} else {
-				t1 = new Term(env.get(leftTerm.getValue()).substring(1), false);
-//			}
+			t1 = new Term(env.get(leftTerm.getValue()).substring(1), false);
 		}
 		
 		if (rightTerm.isConstant()) {
 			t2 = new Term(rightTerm.getValue().replace("'", ""), true);
 		} else {
-//			if (!env.containsKey(rightTerm.getValue())) {
-//				String var2 = "?" + rightTerm.getValue();
-//				while (env.values().contains(var2)) {
-//					var2 += "'";
-//				}
-//				env.put(rightTerm.getValue(), var2);
-//				t2 = new Term(rightTerm.getValue(), false);
-//			} else {
-				t2 = new Term(env.get(rightTerm.getValue()).substring(1), false);
-//			}
+			t2 = new Term(env.get(rightTerm.getValue()).substring(1), false);
 		}
 		return new Equality(t1, t2);
 	}
