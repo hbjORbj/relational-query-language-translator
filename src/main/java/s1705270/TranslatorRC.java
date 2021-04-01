@@ -246,8 +246,8 @@ public class TranslatorRC { // Translates RC into RA
 		}
 	}
 
-	public Expression translate(Formula f) throws TranslationException {
-		this.env  = new HashMap<>(); // Variable -> Attribute
+	public Expression translate(Formula f, Map<String,String> env) throws TranslationException {
+		this.env  = env; // Variable -> Attribute
 		return translateToRA(f);
 	}
 }
