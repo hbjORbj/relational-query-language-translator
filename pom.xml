@@ -72,7 +72,9 @@
 							<resources>
 								<resource>
 									<directory>${project.basedir}/src/main/resources</directory>
-									<filtering>false</filtering>
+									<includes>
+										<include>**/*.jar</include>
+									</includes>	
 								</resource>
 							</resources>
 						</configuration>
