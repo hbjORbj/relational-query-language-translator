@@ -113,9 +113,17 @@ public class TranslatorRC { // Translates RC into RA
 		Expression relation = new BaseExpression(name);
 		List<String> attributes = schema.getAttributes(name);
 		Map<String,String> replacements = new HashMap<>();
+		List<String> namesOfTerms = new ArrayList<String>();
 		for (int i=0; i < attributes.size(); i++) {
 			Term t = terms.get(i); 
+			if (t.isConstant()) {
+				throw new TranslationException("One of the assumptions: No constants in predicates.");
+			}
 			String var = t.toString();
+			if (namesOfTerms.contains(var)) {
+				throw new TranslationException("One of the assumptions: No variable name is repeated within a predicate.");
+			}
+			namesOfTerms.add(var);
 			String attr = null;
 			if (env.containsKey(var)) {
 				attr = env.get(var);
@@ -163,12 +171,12 @@ public class TranslatorRC { // Translates RC into RA
 		return null;
 	}
 
-	private Expression equalityToRA(Equality eq) {
+	private Expression equalityToRA(Equality eq) throws TranslationException {
 		uk.ac.ed.pguaglia.real.lang.Term t1 = termToTerm(eq.getLeftTerm());
 		uk.ac.ed.pguaglia.real.lang.Term t2 = termToTerm(eq.getRightTerm());
 
-		if ((t1.isConstant() && t2.isConstant()) || (t1.isAttribute() && t2.isAttribute() && t1.getValue().equals(t2.getValue()))) { // No atoms of the form: c1 op c2 OR x op x
-			return null;
+		if ((t1.isConstant() && t2.isConstant()) || (t1.isAttribute() && t2.isAttribute() && t1.getValue().equals(t2.getValue()))) {
+			throw new TranslationException("No atoms of the form: c1 op c2 OR x op x");
 		}
 
 

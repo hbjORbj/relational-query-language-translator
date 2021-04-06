@@ -11,6 +11,7 @@ import java.util.Set;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.InputMismatchException;
 import org.antlr.v4.runtime.RecognitionException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -189,38 +190,20 @@ public class CommandLineApp {
 		QUIT, SCHEMA, ENV, RCTORA, RATORC
 	}
 	
-	private static final String APP_COMMAND = "java -jar <path/to/honours-project-X.Y.Z.jar>";
-	private static final String OPT_EXPR_SHORT = "q";
-	private static final String OPT_EXPR_LONG  = "query";
-
-	private static final Options setupCliOptions() {
-		final Options options = new Options();
-		options.addOption(Option.builder(OPT_EXPR_SHORT).longOpt(OPT_EXPR_LONG)
-				.hasArg().argName("expression").build());
-		return options;
-	}
 	private static Schema sch = null;
 	private static Map<String,String> env = new HashMap<String, String>();
 	private static TranslatorRC transRCtoRA = null;
 	private static TranslatorRA transRAtoRC = null;
-	
+	private static String EnvWarningPrompt = 
+			"WARNING: Enter an environment in the following format: \n"
+			+ ".ENV <NAME1> -> <NAME2>, <NAME3> -> <NAME4> \n"
+			+ "Ex) .ENV A -> ?B, B -> ?C \n"
+			+ "Ex) .ENV ?x1 -> Ax1, ?x2 -> Ax2 \n";	
 	public static void main(String[] args) throws RecognitionException, ReplacementException, TranslationException {
-		Options opts = setupCliOptions();
 		HelpFormatter formatter = new HelpFormatter();
 		CommandLineParser optParser = new DefaultParser();
 		CommandLine cliCmd = null;
-		try {
-			cliCmd = optParser.parse( opts, args );
-		} catch (MissingOptionException e2) {
-			formatter.printHelp( APP_COMMAND, opts );
-			System.exit(-1);
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			System.exit(-1);
-		}
 		
-		final boolean batch = cliCmd.hasOption(OPT_EXPR_SHORT);
 		Terminal terminal = null;
 		try {
 			terminal = TerminalBuilder.terminal();
@@ -236,136 +219,141 @@ public class CommandLineApp {
 		
 		mainLoop: do {
 			String line = null;
-			if (batch == false) {
-				line = lineReader.readLine(prompt).strip();
-				if (line.startsWith(".")) {
-					int spc = line.indexOf(" ");
-					String cmdName;
-					if (spc > 0) {
-						cmdName = line.substring(1,spc);
-						line = line.substring(spc).strip();
-					} else {
-						cmdName = line.substring(1);
-						line = "";
-					}
-					Commands cmd;
-					try {
-						cmd = Commands.valueOf(cmdName.toUpperCase());
-					} catch (IllegalArgumentException e) {
-						System.err.println(String.format("Unrecognized command \".%s\"", cmdName));
-						continue mainLoop;
-					}
-					cmdSwitch: switch (cmd) {
-						case QUIT:
-							if (line.isBlank() == false) {
-								System.err.println(String.format("WARNING: ignoring \"%s\"", line));
-							}
-							break mainLoop;
-						case SCHEMA:
-							String strSchema;
-							if (line.isBlank() == true) {
-								strSchema = schemaToDisplay();
-								System.out.println("CURRENT SCHEMA: " + strSchema + "\n");
-								System.out.println("You can set a new schema in the following format: \n" 
-								+ ".SCHEMA <RelationName1>:<Attribute1>,<Attribute2>;<RelationName2>:<Attribute3> \n"
-								+ "Ex) .SCHEMA R:A,B; S:B,C \n");							
+			line = lineReader.readLine(prompt).strip();
+			if (line.startsWith(".")) {
+				int spc = line.indexOf(" ");
+				String cmdName;
+				if (spc > 0) {
+					cmdName = line.substring(1,spc);
+					line = line.substring(spc).strip();
+				} else {
+					cmdName = line.substring(1);
+					line = "";
+				}
+				Commands cmd;
+				try {
+					cmd = Commands.valueOf(cmdName.toUpperCase());
+				} catch (IllegalArgumentException e) {
+					System.err.println(String.format("Unrecognized command \".%s\"", cmdName));
+					continue mainLoop;
+				}
+				cmdSwitch: switch (cmd) {
+					case QUIT:
+						if (line.isBlank() == false) {
+							System.err.println(String.format("WARNING: ignoring \"%s\"", line));
+						}
+						break mainLoop;
+					case SCHEMA:
+						String strSchema;
+						if (line.isBlank() == true) {
+							strSchema = schemaToDisplay();
+							System.out.println("CURRENT SCHEMA: " + strSchema + "\n");
+							System.out.println("You can set a new schema in the following format: \n" 
+							+ ".SCHEMA <RelationName1>:<Attribute1>,<Attribute2>;<RelationName2>:<Attribute3> \n"
+							+ "Ex) .SCHEMA R:A,B; S:B,C \n");							
+						} else {
+							if (line.equals("{}")) {
+								// reset schema
+								sch = null;
+								System.out.println("CURRENT SCHEMA: {} \n");
 							} else {
-								if (line.equals("{}")) {
-									// reset schema
-									sch = null;
-									System.out.println("CURRENT SCHEMA: {} \n");
-								} else {
-									try {
-										sch = parseSchema(line);
-										strSchema = schemaToDisplay();
-										System.out.println("CURRENT SCHEMA: " + strSchema + "\n");
-									} catch (Exception e) {
-										System.err.println("WARNING: Enter a schema in the following format: \n" 
-										+ ".SCHEMA <RelationName1>:<Attribute1>,<Attribute2>;<RelationName2>:<Attribute3> \n"
-										+ "Ex) .SCHEMA R:A,B; S:B,C \n");
-									}
-								}
-
-							}
-							break cmdSwitch;
-						case ENV:
-							String strEnv;
-							if (line.isBlank() == true) {
-								strEnv = envToDisplay();
-								System.out.println("CURRENT ENVIRONMENT: " + strEnv + "\n");
-								System.out.println("You can set a new environment in the following format: \n"
-								+ ".ENV <NAME1> -> <NAME2>, <NAME3> -> <NAME4> \n"
-								+ "Ex) .ENV A->?B, B->?C \n");
-							} else if (line.equals("{}")) {
-								// reset env
-								env = new HashMap<String, String>();
-								System.out.println("CURRENT ENVIRONMENT: {} \n");
-							} else if (sch == null) {
-								System.out.println("WARNING: Schema is required to set a custom environment. \n"
-								+ "You can set a new schema in the following format: \n" 
-								+ ".SCHEMA <RelationName1>:<Attribute1>,<Attribute2>;<RelationName2>:<Attribute3> \n"
-								+ "Ex) .SCHEMA R:A,B; S:B,C \n");
-							} else {
-								Map<String,String> tempEnv = null;
 								try {
-									tempEnv = parseEnv(line);								
+									sch = parseSchema(line);
+									strSchema = schemaToDisplay();
+									System.out.println("CURRENT SCHEMA: " + strSchema + "\n");
 								} catch (Exception e) {
-									System.err.println("WARNING: Enter an environment in the following format: \n"
-									+ ".ENV <NAME1> -> <NAME2>, <NAME3> -> <NAME4> \n"
-									+ "Ex) .ENV A->?B, B->?C \n");
-								}
-								try {
-									if (validateEnv(tempEnv, sch) == true) {
-										env = tempEnv;
-										strEnv = envToDisplay();
-										System.out.println("CURRENT ENVIRONMENT: " + strEnv + "\n");
-									}	
-								} catch (RecognitionException e1) {
-									e1.printStackTrace();
-								} catch (RuntimeException e2) {
-									e2.printStackTrace();
+									System.err.println("WARNING: Enter a schema in the following format: \n" 
+									+ ".SCHEMA <RelationName1>:<Attribute1>,<Attribute2>;<RelationName2>:<Attribute3> \n"
+									+ "Ex) .SCHEMA R:A,B; S:B,C \n");
 								}
 							}
-							break cmdSwitch;
-						case RATORC:
-							if (line.isBlank() == true) {
-								System.out.println("Provide a RA expression to perform translation. \n"
+
+						}
+						break cmdSwitch;
+					case ENV:
+						String strEnv;
+						if (line.isBlank() == true) {
+							strEnv = envToDisplay();
+							System.out.println("CURRENT ENVIRONMENT: " + strEnv + "\n");
+							System.out.println("You can set a new environment in the following format: \n"
+							+ ".ENV <NAME1> -> <NAME2>, <NAME3> -> <NAME4> \n"
+							+ "Ex) .ENV A -> ?B, B -> ?C \n"
+							+ "Ex) .ENV ?x1 -> Ax1, ?x2 -> Ax2 \n");
+						} else if (line.equals("{}")) {
+							// reset env
+							env = new HashMap<String, String>();
+							System.out.println("CURRENT ENVIRONMENT: {} \n");
+						} else if (sch == null) {
+							System.out.println("WARNING: Schema is required to set a custom environment. \n"
+							+ "You can set a new schema in the following format: \n" 
+							+ ".SCHEMA <RelationName1>:<Attribute1>,<Attribute2>;<RelationName2>:<Attribute3> \n"
+							+ "Ex) .SCHEMA R:A,B; S:B,C \n");
+						} else {
+							Map<String,String> tempEnv = null;
+							try {
+								tempEnv = parseEnv(line);								
+							} catch (InputMismatchException e) {
+								System.err.println(EnvWarningPrompt);								
+							} catch (Exception e) {
+								System.err.println(EnvWarningPrompt);								
+							}
+							try {
+								if (validateEnv(tempEnv, sch) == true) {
+									env = tempEnv;
+									strEnv = envToDisplay();
+									System.out.println("CURRENT ENVIRONMENT: " + strEnv + "\n");
+								}	
+							} catch (RecognitionException e1) {
+								// Error returned in validateEnv()
+							} catch (RuntimeException e2) {
+								// Error returned in validateEnv()
+							}
+						}
+						break cmdSwitch;
+					case RATORC:
+						if (line.isBlank() == true) {
+							System.out.println("Provide a RA expression to perform translation. \n"
+							+ "Ex) .RATORC <P>[A](R) \n");
+						} else if (sch == null) {
+							System.err.println("WARNING: Schema is required to perform translation. \n"
+							+ "You can set a new schema in the following format: \n" 
+							+ ".SCHEMA <RelationName1>:<Attribute1>,<Attribute2>;<RelationName2>:<Attribute3> \n"
+							+ "Ex) .SCHEMA R:A,B; S:B,C \n");
+						} else {
+							transRAtoRC = new TranslatorRA(sch);
+							try {
+								Expression e = Expression.parse(line);
+								e.signature(sch.convert());
+								Formula f = transRAtoRC.translate(e, env);
+								System.out.println("Provided RA expression: " + e + "\n");
+								System.out.println("Translated RC query: " + f + "\n");
+							} catch (SchemaException e1) {
+								e1.printStackTrace();
+							} catch (Exception e2) {
+								System.err.println("Provide a valid RA expression. \n"
 								+ "Ex) .RATORC <P>[A](R) \n");
-							} else if (sch == null) {
-								System.err.println("WARNING: Schema is required to perform translation. \n"
-								+ "You can set a new schema in the following format: \n" 
-								+ ".SCHEMA <RelationName1>:<Attribute1>,<Attribute2>;<RelationName2>:<Attribute3> \n"
-								+ "Ex) .SCHEMA R:A,B; S:B,C \n");
-							} else {
-								transRAtoRC = new TranslatorRA(sch);
-								try {
-									Expression e = Expression.parse(line);
-									e.signature(sch.convert());
-									System.out.println("Provided RA expression: " + e + "\n");
-									System.out.println("Translated RC query: " + transRAtoRC.translate(e, env) + "\n");
-								} catch (SchemaException e1) {
-									e1.printStackTrace();
-								} catch (Exception e2) {
-									System.err.println("Provide a valid RA expression. \n"
-									+ "Ex) .RATORC <P>[A](R) \n");
-								}
 							}
-							break cmdSwitch;
-						case RCTORA:
-							if (line.isBlank() == true) {
-								System.out.println("Provide a RC query to perform translation. \n"
-								+ "Ex) .RCTORA [E]?x2(Customer(?x1,?x2) \n");
-							} else if (sch == null) {
-								System.err.println("WARNING: Schema is required to perform translation. \n"
-								+ "You can set a new schema in the following format: \n" 
-								+ ".SCHEMA <RelationName1>:<Attribute1>,<Attribute2>;<RelationName2>:<Attribute3> \n"
-								+ "Ex) .SCHEMA R:A,B; S:B,C \n");
-							} else {								
+						}
+						break cmdSwitch;
+					case RCTORA:
+						if (line.isBlank() == true) {
+							System.out.println("Provide a RC query to perform translation. \n"
+							+ "Ex) .RCTORA [E]?x2(Customer(?x1,?x2) \n");
+						} else if (sch == null) {
+							System.err.println("WARNING: Schema is required to perform translation. \n"
+							+ "You can set a new schema in the following format: \n" 
+							+ ".SCHEMA <RelationName1>:<Attribute1>,<Attribute2>;<RelationName2>:<Attribute3> \n"
+							+ "Ex) .SCHEMA R:A,B; S:B,C \n");
+						} else {
+							if (line.contains("->") || line.contains("[A]") || line.contains("~~")) {
+								System.err.println("No universal quantifiers, implications, double negations are allowed.");
+							} else {	
 								transRCtoRA = new TranslatorRC(sch);
 								try {
 									Formula f = Formula.parse(line);
+									Expression exp = transRCtoRA.translate(f, env);
 									System.out.println("Provided RC query: " + f + "\n");
-									System.out.println("Translated RA expression: " + transRCtoRA.translate(f, env) + "\n");
+									System.out.println("Translated RA expression: " + exp + "\n");
 								} catch (TranslationException e1) {
 									e1.printStackTrace();
 								} catch (Exception e2) {
@@ -373,17 +361,16 @@ public class CommandLineApp {
 									+ "Ex) .RCTORA [E]?x2(Customer(?x1,?x2) \n");
 								}
 							}
-							break cmdSwitch;
-					}
-					
-					continue mainLoop;
+						}
+						break cmdSwitch;
 				}
-			} else {
-				line = cliCmd.getOptionValue(OPT_EXPR_SHORT);
+				
+				continue mainLoop;
 			}
+		
 			if (line.isBlank() == true) {
 				continue mainLoop;
 			}
-		} while (batch == false);
+		} while (true);
 	}
 }
