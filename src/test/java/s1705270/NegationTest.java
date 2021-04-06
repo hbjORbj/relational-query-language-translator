@@ -71,10 +71,7 @@ class NegationTest {
 		Formula f1 = Formula.parse("~User(?x1,?x2,?x3)");
 		
 		Expression result = trans.translate(f1);
-		assertEquals(result.toString(), "( ( ( ( <R>[id->Ax1]( <P>[id]( User ) ) <U> <R>[name->Ax1]( <P>[name]( User ) ) ) <U> <R>[age->Ax1]( <P>[age]( User ) ) ) <X> "
-				+ "( ( <R>[id->Ax2]( <P>[id]( User ) ) <U> <R>[name->Ax2]( <P>[name]( User ) ) ) <U> <R>[age->Ax2]( <P>[age]( User ) ) ) ) <X> "
-				+ "( ( <R>[id->Ax3]( <P>[id]( User ) ) <U> <R>[name->Ax3]( <P>[name]( User ) ) ) <U> <R>[age->Ax3]( <P>[age]( User ) ) ) ) <D> "
-				+ "<R>[name->Ax2,id->Ax1,age->Ax3]( User )");
+		assertEquals(result.toString(), "( ( Adom_Ax3 <X> Adom_Ax2 ) <X> Adom_Ax1 ) <D> <R>[name->Ax2,id->Ax1,age->Ax3]( User )");
 	}
 
 }

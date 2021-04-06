@@ -31,13 +31,11 @@ NAME
 
 CONSTANT
 :
-	DIGIT+ |
-	LETTER+
 	(
 		LETTER
 		| DIGIT
 		| '_'
-	)*
+	)+
 ;
 
 WHITESPACE
@@ -105,7 +103,8 @@ variableList
 
 constant
 :
-	CONSTANT
+	CONSTANT |
+	NAME
 ;
 
 predicateName

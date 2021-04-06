@@ -99,12 +99,8 @@ class DisjunctionTest {
 		
 		Expression exp = new Union(e1, e2);
 		Expression result = trans.translate(f1);
-		
-		assertEquals(result.toString(), exp.toString());
-		assertEquals(result.toString(), "<R>[name->Ax2,id->Ax1,age->Ax3]( User ) <U> "
-				+ "( ( <S>[Ax2 = 'Benny']( ( <R>[id->Ax2]( <P>[id]( User ) ) <U> <R>[name->Ax2]( <P>[name]( User ) ) ) <U> <R>[age->Ax2]( <P>[age]( User ) ) ) <X> "
-				+ "( ( <R>[id->Ax1]( <P>[id]( User ) ) <U> <R>[name->Ax1]( <P>[name]( User ) ) ) <U> <R>[age->Ax1]( <P>[age]( User ) ) ) ) <X> "
-				+ "( ( <R>[id->Ax3]( <P>[id]( User ) ) <U> <R>[name->Ax3]( <P>[name]( User ) ) ) <U> <R>[age->Ax3]( <P>[age]( User ) ) ) )");
+		assertEquals(exp.toString(), "<R>[name->Ax2,id->Ax1,age->Ax3]( User ) <U> ( ( <S>[Ax2 = 'Benny']( Adom_Ax2 ) <X> Adom_Ax1 ) <X> Adom_Ax3 )");
+		assertEquals(result.toString(), "<R>[name->Ax2,id->Ax1,age->Ax3]( User ) <U> ( ( <S>[Ax2 = 'Benny']( Adom_Ax2 ) <X> Adom_Ax3 ) <X> Adom_Ax1 )");
 	}
 
 }

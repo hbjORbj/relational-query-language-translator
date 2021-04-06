@@ -40,7 +40,7 @@ public class CommandLineApp {
 		//parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 		return parser;
 	}
-	
+	  
 	private static RCParser getParserRC(String s) {
 		RCLexer lexer = new RCLexer(CharStreams.fromString(s));
 		//lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
