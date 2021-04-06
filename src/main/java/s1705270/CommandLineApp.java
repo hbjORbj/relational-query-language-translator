@@ -38,7 +38,7 @@ public class CommandLineApp {
 		//lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
 		RAParser parser = new RAParser(new CommonTokenStream(lexer));
 		parser.setErrorHandler(new BailErrorStrategy());
-		//parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+//		parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 		return parser;
 	}
 	  
@@ -56,8 +56,18 @@ public class CommandLineApp {
 		for (String spec : str.split(";")) {
 			int k = spec.indexOf(":");
 			String relation = spec.substring(0,k).trim();
+			// Only Digit, Letter and Underscore are allowed in RA relation names.
+			if (!relation.replaceAll("[0-9a-zA-Z_]", "").equals("")) {
+				System.err.println("Invalid relation name. Only digit, letter and underscore are allowed.");
+				return null;
+			}
 			ArrayList<String> attributes = new ArrayList<>();
 			for (String attr : spec.substring(k+1).split(",")) {
+				// Only Digit, Letter and Underscore are allowed in RA attribute names.
+				if (!attr.replaceAll("[0-9a-zA-Z_]", "").equals("")) {
+					System.err.println("Invalid attribute name. Only digit, letter and underscore are allowed.");
+					return null;
+				}
 				attributes.add(attr.trim());
 			}
 			map.put(relation,attributes);
@@ -79,6 +89,7 @@ public class CommandLineApp {
 	private static boolean validateEnv(Map<String,String> map, Schema sch) throws TranslationException {
 		Boolean RAtoRC = false;
 		Boolean RCtoRA = false;
+
 		for (String k : map.keySet()) {
 			if (k.charAt(0) == '?') {
 				RCtoRA = true;
@@ -101,23 +112,13 @@ public class CommandLineApp {
 				try {
 					pRA.attribute();
 				} catch (RuntimeException e) {
-					Throwable cause = e.getCause();
-					if (cause instanceof RecognitionException) {
-						throw (RecognitionException) cause;
-					} else {
-						throw e;
-					}
+					throw e;
 				}
 				RCParser pRC = getParserRC(map.get(k));
 				try {
 					pRC.variable();
 				} catch (RuntimeException e) {
-					Throwable cause = e.getCause();
-					if (cause instanceof RecognitionException) {
-						throw (RecognitionException) cause;
-					} else {
-						throw e;
-					}
+					throw e;
 				}
 			}
 		} else {
@@ -127,23 +128,17 @@ public class CommandLineApp {
 				try {
 					pRC.variable();
 				} catch (RuntimeException e) {
-					Throwable cause = e.getCause();
-					if (cause instanceof RecognitionException) {
-						throw (RecognitionException) cause;
-					} else {
-						throw e;
-					}
+					throw e;
+				}
+				if (!map.get(k).replaceAll("[0-9a-zA-Z_]", "").equals("")) {
+					System.err.println("Invalid attribute name. Only digit, letter and underscore are allowed.");
+					return false;
 				}
 				RAParser pRA = getParserRA(map.get(k));
 				try {
 					pRA.attribute();
 				} catch (RuntimeException e) {
-					Throwable cause = e.getCause();
-					if (cause instanceof RecognitionException) {
-						throw (RecognitionException) cause;
-					} else {
-						throw e;
-					}
+					throw e;
 				}
 			}
 		}
@@ -259,8 +254,10 @@ public class CommandLineApp {
 							} else {
 								try {
 									sch = parseSchema(line);
-									strSchema = schemaToDisplay();
-									System.out.println("CURRENT SCHEMA: " + strSchema + "\n");
+									if (sch != null) {										
+										strSchema = schemaToDisplay();
+										System.out.println("CURRENT SCHEMA: " + strSchema + "\n");
+									}
 								} catch (Exception e) {
 									System.err.println("WARNING: Enter a schema in the following format: \n" 
 									+ ".SCHEMA <RelationName1>:<Attribute1>,<Attribute2>;<RelationName2>:<Attribute3> \n"
@@ -302,11 +299,9 @@ public class CommandLineApp {
 									env = tempEnv;
 									strEnv = envToDisplay();
 									System.out.println("CURRENT ENVIRONMENT: " + strEnv + "\n");
-								}	
-							} catch (RecognitionException e1) {
-								// Error returned in validateEnv()
-							} catch (RuntimeException e2) {
-								// Error returned in validateEnv()
+								}
+							} catch (RuntimeException e1) {
+								e1.printStackTrace();
 							}
 						}
 						break cmdSwitch;
