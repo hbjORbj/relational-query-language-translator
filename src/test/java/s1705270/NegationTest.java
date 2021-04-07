@@ -7,17 +7,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import uk.ac.ed.pguaglia.real.lang.BaseExpression;
-import uk.ac.ed.pguaglia.real.lang.Difference;
 import uk.ac.ed.pguaglia.real.lang.Expression;
-import uk.ac.ed.pguaglia.real.lang.Product;
-import uk.ac.ed.pguaglia.real.lang.Renaming;
-import uk.ac.ed.pguaglia.real.lang.ReplacementException;
 
 class NegationTest {
 
