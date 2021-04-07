@@ -1,6 +1,7 @@
 package s1705270;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,7 +36,7 @@ public class Universal extends Formula {
 	}
 
 	@Override
-	public Formula validRename(Term x, Term y) {
+	public Formula validRename(Term x, Term y, Map<String, String> renamingEnv) {
 		List<Term> newTerms = new ArrayList<Term>();
 		for (Term t : terms) {
 			if (t.equals(x)) {
@@ -44,6 +45,6 @@ public class Universal extends Formula {
 				newTerms.add(new Term(x.getValue(), x.isConstant()));
 			}
 		}
-		return new Universal(newTerms, operand.validRename(x, y));
+		return new Universal(newTerms, operand.validRename(x, y, renamingEnv));
 	}
 }

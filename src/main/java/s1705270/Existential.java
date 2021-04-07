@@ -3,6 +3,7 @@ package s1705270;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Existential extends Formula {
@@ -43,15 +44,16 @@ public class Existential extends Formula {
 	}
 
 	@Override
-	public Formula validRename(Term x, Term y) {
+	public Formula validRename(Term x, Term y, Map<String, String> renamingEnv) {
 		List<Term> newTerms = new ArrayList<Term>();
 		for (Term t : terms) {
 			if (t.equals(x)) {
 				newTerms.add(new Term(y.getValue(), y.isConstant()));
+				renamingEnv.put(x.getValue(), "?" + y.getValue());
 			} else {
 				newTerms.add(new Term(t.getValue(), t.isConstant()));
 			}
 		}
-		return new Existential(newTerms, operand.validRename(x, y));
+		return new Existential(newTerms, operand.validRename(x, y, renamingEnv));
 	}
 }

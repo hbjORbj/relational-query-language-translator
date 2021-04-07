@@ -1,5 +1,6 @@
 package s1705270;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.antlr.v4.runtime.BailErrorStrategy;
@@ -68,13 +69,13 @@ public abstract class Formula {
 
 	public abstract Set<Term> free();
 	
-	public Formula rename(Term x, Term y) throws Exception {
+	public Formula rename(Term x, Term y, Map<String, String> renamingEnv) throws Exception {
 		if (x.isConstant() != y.isConstant()) {
 			throw new Exception("Renaming variable to constant or constant to variable!");
 		} else {
-			return validRename(x, y);
+			return validRename(x, y, renamingEnv);
 		}
 	}
 	
-	public abstract Formula validRename(Term x, Term y);
+	public abstract Formula validRename(Term x, Term y, Map<String, String> renamingEnv);
 }

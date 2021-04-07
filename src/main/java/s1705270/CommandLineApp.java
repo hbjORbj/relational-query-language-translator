@@ -174,7 +174,7 @@ public class CommandLineApp {
 	}
 	
 	private enum Commands {
-		QUIT, SCHEMA, ENV, RCTORA, RATORC
+		QUIT, SCHEMA, ENV, RCTORA, RATORC, RESET
 	}
 	
 	private static Schema sch = null;
@@ -291,6 +291,18 @@ public class CommandLineApp {
 							} catch (RuntimeException e1) {
 								e1.printStackTrace();
 							}
+						}
+						break cmdSwitch;
+					case RESET:
+						if (line.isBlank() == true) {
+							sch = null;
+							env = new HashMap<String, String>();
+							strSchema = schemaToDisplay();
+							strEnv = envToDisplay();
+							System.out.println("CURRENT SCHEMA: " + strSchema + "\n"
+									+ "CURRENT ENVIRONMENT: " + strEnv + "\n");							
+						} else {
+							System.err.println(String.format("WARNING: ignoring \"%s\"", line));
 						}
 						break cmdSwitch;
 					case RATORC:

@@ -1,6 +1,7 @@
 package s1705270;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class Negation extends Formula {
@@ -28,7 +29,7 @@ public class Negation extends Formula {
 	}
 
 	@Override
-	public Formula validRename(Term x, Term y) {
-		return new Negation(operand.validRename(x, y));
+	public Formula validRename(Term x, Term y, Map<String, String> renamingEnv) {
+		return new Negation(operand.validRename(x, y, renamingEnv));
 	}
 }
