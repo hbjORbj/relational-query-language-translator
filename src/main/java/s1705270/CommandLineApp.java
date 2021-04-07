@@ -192,7 +192,7 @@ public class CommandLineApp {
 	private static String EnvWarningPrompt = 
 			"WARNING: Enter an environment in the following format: \n"
 			+ ".ENV <NAME1> -> <NAME2>, <NAME3> -> <NAME4> \n"
-			+ "Ex) .ENV A -> ?B, B -> ?C \n"
+			+ "Ex) .ENV A -> ?x, B -> ?y \n"
 			+ "Ex) .ENV ?x1 -> Ax1, ?x2 -> Ax2 \n";	
 	public static void main(String[] args) throws RecognitionException, ReplacementException, TranslationException {		
 		Terminal terminal = null;
