@@ -13,10 +13,8 @@ public abstract class Formula {
 	
 	public static Formula parse(String s) throws RecognitionException {
 		RCLexer lexer = new RCLexer(CharStreams.fromString(s));
-		//lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
 		RCParser parser = new RCParser(new CommonTokenStream(lexer));
 		parser.setErrorHandler(new BailErrorStrategy());
-		//parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 		try {
 			ParseTree tree = parser.formula();
 			RCListenerImpl listener = new RCListenerImpl();

@@ -35,19 +35,15 @@ import uk.ac.ed.pguaglia.real.parsing.RAParser;
 public class CommandLineApp {
 	private static RAParser getParserRA(String s) {
 		RALexer lexer = new RALexer(CharStreams.fromString(s));
-		//lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
 		RAParser parser = new RAParser(new CommonTokenStream(lexer));
 		parser.setErrorHandler(new BailErrorStrategy());
-//		parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 		return parser;
 	}
 	  
 	private static RCParser getParserRC(String s) {
 		RCLexer lexer = new RCLexer(CharStreams.fromString(s));
-		//lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
 		RCParser parser = new RCParser(new CommonTokenStream(lexer));
 		parser.setErrorHandler(new BailErrorStrategy());
-		//parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 		return parser;
 	}
 
@@ -89,7 +85,6 @@ public class CommandLineApp {
 	private static boolean validateEnv(Map<String,String> map, Schema sch) throws TranslationException {
 		Boolean RAtoRC = false;
 		Boolean RCtoRA = false;
-
 		for (String k : map.keySet()) {
 			if (k.charAt(0) == '?') {
 				RCtoRA = true;
@@ -107,7 +102,13 @@ public class CommandLineApp {
 		}
 		if (RAtoRC == true) {
 			// Validate Attribute to Variable Environment
+			List<String> attrs = sch.getAllAttributes();
 			for (String k : map.keySet()) {
+				// Warning if attribute in the environment is not among the attributes in the schema
+				if (!attrs.contains(k)) {
+					System.err.println("One or more attributes in the environment are not among the attributes in the schema. \n");
+					return false;
+				}
 				RAParser pRA = getParserRA(k);
 				try {
 					pRA.attribute();
@@ -155,7 +156,6 @@ public class CommandLineApp {
 				return false;
 			}
 		}
-		// TODO: give a warning for each attribute in the environment that is not among the attributes in the schema
 		return true;
 	}
 	
@@ -194,11 +194,7 @@ public class CommandLineApp {
 			+ ".ENV <NAME1> -> <NAME2>, <NAME3> -> <NAME4> \n"
 			+ "Ex) .ENV A -> ?B, B -> ?C \n"
 			+ "Ex) .ENV ?x1 -> Ax1, ?x2 -> Ax2 \n";	
-	public static void main(String[] args) throws RecognitionException, ReplacementException, TranslationException {
-		HelpFormatter formatter = new HelpFormatter();
-		CommandLineParser optParser = new DefaultParser();
-		CommandLine cliCmd = null;
-		
+	public static void main(String[] args) throws RecognitionException, ReplacementException, TranslationException {		
 		Terminal terminal = null;
 		try {
 			terminal = TerminalBuilder.terminal();

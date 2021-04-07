@@ -37,11 +37,7 @@ public class RCListenerImpl extends RCBaseListener {
 		} else if ( ctx.getParent() instanceof RCParser.VariableListContext ) {
 			varList.add(t);
 		} else {
-//			if (termList.contains(t)) { // No variable name is repeated within a predicate
-//				throw new RuntimeException("You can't repeat a variable within a predicate.");
-//			} else {
 			termList.add(t);
-//			}
 		}
 	}
 
@@ -79,13 +75,6 @@ public class RCListenerImpl extends RCBaseListener {
 	
 	@Override
 	public void exitPredicate(RCParser.PredicateContext ctx) {
-//		for (Term var : termList) {
-//			if (boundVarList.contains(var)) { // this variable is already bound by some quantifier somewhere else in the formula
-//				throw new RuntimeException("No variable name can occur both free and bound.");
-//			} else {
-//				freeVarList.add(var);
-//			}
-//		}
 		formulaStack.push(new Predicate(predicateName, termList));
 	}
 
@@ -125,51 +114,20 @@ public class RCListenerImpl extends RCBaseListener {
 	@Override
 	public void exitExistentialQuantifier(RCParser.ExistentialQuantifierContext ctx) {
 		Formula f = formulaStack.pop();
-		
-//		Set<Term> free = f.free();
-//		for (Term var : varList) {
-//			if (boundVarList.contains(var)) { // another quantifier is already binding this variable
-//				throw new RuntimeException("No distinct pair of quantifiers can bind the same variable name.");
-//			} else {
-//				boundVarList.add(var); // this variable is now bound
-//			}
-//			
-//			if (free.contains(var) == false) { // Check whether each term is free in given formula
-//				throw new RuntimeException("One or more variables are not free in given formula.");
-//			} else {
-//				freeVarList.remove(var); // this variable is no more free
-//			}
-//			
-//			if (freeVarList.contains(var)) { // this bound variable is free somewhere else in the formula, so we throw an error
-//				throw new RuntimeException("No variable name can occur both free and bound.");
-//			}
-//		}
 		formulaStack.push(new Existential(varListStack.pop(), f));
 	}
 
 	@Override
-	public void exitEquality(RCParser.EqualityContext ctx) { // No atoms of the form: x op x OR c1 op c2
+	public void exitEquality(RCParser.EqualityContext ctx) {
 		Term right = termStack.pop();
 		Term left = termStack.pop();
-//		if (left.isVariable() && right.isVariable() && left == right) {
-//			throw new RuntimeException("You can't use the same variable for comparison.");
-//		}
-//		if (left.isConstant() && right.isConstant()) {
-//			throw new RuntimeException("You can't compare constants.");
-//		}
 		formulaStack.push(new Equality(left, right));
 	}
 
 	@Override
-	public void exitLessThan(RCParser.LessThanContext ctx) { // No atoms of the form: x op x OR c1 op c2
+	public void exitLessThan(RCParser.LessThanContext ctx) {
 		Term right = termStack.pop();
 		Term left = termStack.pop();
-//		if (left.isVariable() && right.isVariable() && left == right) {
-//			throw new RuntimeException("You can't use the same variable for comparison.");
-//		}
-//		if (left.isConstant() && right.isConstant()) {
-//			throw new RuntimeException("You can't compare constants.");
-//		}
 		formulaStack.push(new LessThan(left, right));
 	}
 }

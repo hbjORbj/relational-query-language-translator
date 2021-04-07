@@ -1,5 +1,6 @@
 package s1705270;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,14 @@ public class Schema {
 	
 	public List<String> getAttributes(String rel) {
 		return map.get(rel);
+	}
+	
+	public List<String> getAllAttributes() {
+		List<String> attrs = new ArrayList<String>();
+		for (String r : map.keySet()) {
+			attrs.addAll(map.get(r));
+		}
+		return attrs;
 	}
 	
 	public uk.ac.ed.pguaglia.real.db.Schema convert() {
