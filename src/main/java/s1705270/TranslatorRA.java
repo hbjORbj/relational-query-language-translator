@@ -23,7 +23,6 @@ public class TranslatorRA { // Translates RA into RC
 
 	private Schema schema;
 	private Map<String,String> env; // Attribute -> Variable
-	private Map<String,String> renamingEnv = new HashMap<String, String>();
 	public TranslatorRA(Schema sch) {
 		this.schema = sch;
 	}
@@ -100,8 +99,8 @@ public class TranslatorRA { // Translates RA into RC
 			Term to = new Term(env.get(toAttr).substring(1), false);
 			Term primed = new Term(env.get(toAttr).substring(1) + "'", false);
 			try {
-				f = f.rename(to, primed, renamingEnv);
-				f = f.rename(from, to, renamingEnv);
+				f = f.rename(to, primed);
+				f = f.rename(from, to);
 			} catch (Exception e1) {
 				throw new TranslationException(e1.getMessage());
 			}
@@ -229,11 +228,6 @@ public class TranslatorRA { // Translates RA into RC
 	public Formula translate(Expression e, Map<String,String> env) throws TranslationException {
 		this.env  = env; // Attribute -> Variable
 		Formula f = translateToRC(e);
-		for (String attr : renamingEnv.keySet()) {
-			if (env.containsKey(attr)) {
-				env.put(attr, renamingEnv.get(attr));
-			}
-		}
 		return f;
 	}
 }

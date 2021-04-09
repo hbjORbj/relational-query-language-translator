@@ -9,9 +9,9 @@ public class Implication extends BinaryOperation {
 	}
 
 	@Override
-	public Formula validRename(Term x, Term y, Map<String, String> renamingEnv) {
-		Formula renamedLeft = leftOperand.validRename(x, y, renamingEnv);
-		Formula renamedRight = rightOperand.validRename(x, y, renamingEnv);
+	public Formula validRename(Term x, Term y) {
+		Formula renamedLeft = leftOperand.validRename(x, y);
+		Formula renamedRight = rightOperand.validRename(x, y);
 		return new Implication(renamedLeft, renamedRight);
 	}
 }

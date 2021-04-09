@@ -69,13 +69,13 @@ public abstract class Formula {
 
 	public abstract Set<Term> free();
 	
-	public Formula rename(Term x, Term y, Map<String, String> renamingEnv) throws Exception {
+	public Formula rename(Term x, Term y) throws Exception {
 		if (x.isConstant() != y.isConstant()) {
 			throw new Exception("Renaming variable to constant or constant to variable!");
 		} else {
-			return validRename(x, y, renamingEnv);
+			return validRename(x, y);
 		}
 	}
 	
-	public abstract Formula validRename(Term x, Term y, Map<String, String> renamingEnv);
+	public abstract Formula validRename(Term x, Term y);
 }

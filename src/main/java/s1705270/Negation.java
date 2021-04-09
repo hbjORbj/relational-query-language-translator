@@ -29,7 +29,7 @@ public class Negation extends Formula {
 	}
 
 	@Override
-	public Formula validRename(Term x, Term y, Map<String, String> renamingEnv) {
-		return new Negation(operand.validRename(x, y, renamingEnv));
+	public Formula validRename(Term x, Term y) {
+		return new Negation(operand.validRename(x, y));
 	}
 }
