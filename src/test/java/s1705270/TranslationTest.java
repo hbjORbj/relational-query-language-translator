@@ -29,6 +29,7 @@ public class TranslationTest {
 	public static void prepareTestCases() throws FileNotFoundException, ReplacementException {
 		Scanner translationsRC = new Scanner(new File(System.getProperty("user.dir") + "/src/main/resources/translationsRC.txt"));
 		Scanner schemasRC = new Scanner(new File(System.getProperty("user.dir") + "/src/main/resources/schemasRC.txt"));
+		Scanner envsRC = new Scanner(new File(System.getProperty("user.dir") + "/src/main/resources/envsRC.txt"));
 		while (translationsRC.hasNextLine()) {
 			String stringRC = translationsRC.nextLine();
 			Formula f = Formula.parse(stringRC);
@@ -49,6 +50,20 @@ public class TranslationTest {
 					map.put(name, Arrays.asList(attrString.split(" ")));
 				}
 				schemaPairsRC.put(f, new Schema(map));
+			}
+			if (envsRC.hasNextLine()) {
+				String env = envsRC.nextLine();
+				String[] pairs = env.split(",");
+				HashMap<String,String> map = new HashMap<String,String>();
+				if (pairs.length > 0) {				
+					for (String pair : pairs) {
+						Integer idx = pair.indexOf("->");
+						String left = pair.substring(0, idx);
+						String right = pair.substring(idx + 2);
+						map.put(left, right);
+					}
+				}
+				envPairsRC.put(f, map);
 			}
         }
 		
@@ -98,8 +113,9 @@ public class TranslationTest {
 		for (Formula f : translationPairsRC.keySet()) {
 			try {
 				Schema sch = schemaPairsRC.get(f);
+				Map<String,String> env = envPairsRC.get(f);
 				TranslatorRC transRC = new TranslatorRC(sch);
-				assertEquals(transRC.translate(f).toString(), translationPairsRC.get(f).toString());
+				assertEquals(transRC.translate(f, env).toString(), translationPairsRC.get(f).toString());
 			} catch (TranslationException error) {
 				error.printStackTrace();
 			}
