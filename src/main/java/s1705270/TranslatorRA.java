@@ -34,11 +34,11 @@ public class TranslatorRA { // Translates RA into RC
 		for (String attr : attrs) {
 			String var = null;
 			if (!env.containsKey(attr)) {
-				var = "?" + attr;
+				var = "?" + attr; // maps attribute "A" to variable "?A"
 				while (env.values().contains(var)) {
 					var += "'";
 				}
-				env.put(attr, var); // maps attribute "A" to variable "?A"
+				env.put(attr, var); 
 			} else {
 				var = env.get(attr);
 			}
@@ -181,6 +181,8 @@ public class TranslatorRA { // Translates RA into RC
 		return new Equality(t1, t2);
 	}
 	
+	/* Inequality is not supported for translation as it is not also supported in 
+	 * Relational Algebra interpreter developed by Dr. Paolo */
 //	private Formula lessThanToRC(uk.ac.ed.pguaglia.real.lang.LessThan c) { // RA LessThan Class is needed
 //		uk.ac.ed.pguaglia.real.lang.Term leftTerm = c.getLeftTerm();
 //		uk.ac.ed.pguaglia.real.lang.Term rightTerm = c.getRightTerm();

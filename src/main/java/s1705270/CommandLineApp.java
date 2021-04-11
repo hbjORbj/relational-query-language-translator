@@ -174,7 +174,7 @@ public class CommandLineApp {
 	}
 	
 	private enum Commands {
-		QUIT, SCHEMA, ENV, RCTORA, RATORC, RESET
+		QUIT, SCHEMA, ENV, RCTORA, RATORC, RESET, HELP
 	}
 	
 	private static Schema sch = null;
@@ -221,6 +221,20 @@ public class CommandLineApp {
 					continue mainLoop;
 				}
 				cmdSwitch: switch (cmd) {
+					case HELP:
+						if (line.isBlank() == false) {
+							System.err.println(String.format("WARNING: ignoring \"%s\"", line));
+						} else {
+							System.err.println("Commands are the following: \n"
+									+ ".SCHEMA \n"
+									+ ".ENV \n"
+									+ ".RATORC \n"
+									+ ".RCTORA \n"
+									+ ".RESET \n"
+									+ ".QUIT \n"
+							);
+						}
+						break cmdSwitch;
 					case QUIT:
 						if (line.isBlank() == false) {
 							System.err.println(String.format("WARNING: ignoring \"%s\"", line));
