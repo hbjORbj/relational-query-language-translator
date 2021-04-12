@@ -16,6 +16,14 @@ public class Universal extends Formula {
 		this.terms = new ArrayList<>();
 		this.terms.addAll(terms);
 	}
+	
+	public Formula getOperand() {
+		return this.operand;
+	}
+
+	public List<Term> getTerms() {
+		return this.terms;
+	}
 
 	@Override
 	public String toString() {
