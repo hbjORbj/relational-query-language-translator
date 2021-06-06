@@ -16,7 +16,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 1. Unpack the archive anywhere on your system.
 
-2. `cd` to the folder `RQLT`.
+2. `cd` to the folder `relational-query-language-translator`.
 
 3. Build the project with Maven:
 ```
