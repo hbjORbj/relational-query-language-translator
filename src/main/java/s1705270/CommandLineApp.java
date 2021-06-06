@@ -347,7 +347,7 @@ public class CommandLineApp {
 					case RCTORA:
 						if (line.isBlank() == true) {
 							System.out.println("Provide a RC query to perform translation. \n"
-							+ "Ex) .RCTORA [E]?x2(Customer(?x1,?x2) \n");
+							+ "Ex) .RCTORA [E]?x2(Customer(?x1,?x2)) \n");
 						} else if (sch == null) {
 							System.err.println("WARNING: Schema is required to perform translation. \n"
 							+ "You can set a new schema in the following format: \n" 
@@ -367,7 +367,7 @@ public class CommandLineApp {
 									e1.printStackTrace();
 								} catch (Exception e2) {
 									System.err.println("Provide a valid RC query. \n"
-									+ "Ex) .RCTORA [E]?x2(Customer(?x1,?x2) \n");
+									+ "Ex) .RCTORA [E]?x2(Customer(?x1,?x2)) \n");
 								}
 							}
 						}
